@@ -1,16 +1,168 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context=".MainActivity">
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:text="@string/hello_world"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/gridLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:columnCount="1"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingTop="@dimen/activity_vertical_margin"
+        tools:context=".MainActivity">
+
+        <LinearLayout android:layout_gravity="fill_horizontal">
+
+            <TextView
+                android:id="@+id/dateTextView"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:text="@string/dateTextView"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/tripDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:hint="@string/datePrompt"
+                android:focusable="false"
+                android:onClick="showDatePickerDialog" />
+
+            <!--android:inputType="none"-->
+            <!--android:editable="false"-->
+
+            <ImageButton
+                android:id="@+id/datePickerButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/datePickerDescription"
+                android:onClick="showDatePickerDialog"
+                android:src="@android:drawable/ic_menu_my_calendar" />
+
+        </LinearLayout>
+
+        <LinearLayout android:layout_gravity="fill_horizontal">
+
+            <TextView
+                android:id="@+id/distanceTextView"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:text="@string/distanceTextView"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/tripDistance"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:hint="@string/distancePrompt"
+                android:imeOptions="actionNext"
+                android:inputType="number">
+
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+
+        <LinearLayout android:layout_gravity="fill_horizontal">
+
+            <TextView
+                android:id="@+id/descTextView"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:text="@string/descTextView"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <EditText
+                android:id="@+id/tripDesc"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:hint="@string/descPrompt"
+                android:imeOptions="actionDone"
+                android:inputType="text" />
+        </LinearLayout>
+
+        <LinearLayout android:layout_gravity="fill_horizontal">
+
+            <Button
+                android:id="@+id/saveOrUpdateButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/saveTripButtonText" />
+
+            <Button
+                android:id="@+id/clearButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/clearButtonText" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill">
+
+            <Spinner
+                android:id="@+id/tripDisplaySpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:entries="@array/trip_list_filter_choices"
+                android:prompt="@string/tripDisplaySpinnerPrompt"
+                android:spinnerMode="dialog" />
+
+            <TextView
+                android:id="@+id/totalTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:text="@string/totalTextView"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <TextView
+                android:id="@+id/totalTextValueView"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:text="44444"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_height="0dp"
+            android:layout_gravity="fill"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:background="@android:color/background_light"
+            android:orientation="vertical"
+            android:paddingLeft="@dimen/activity_horizontal_margin"
+            android:paddingRight="@dimen/activity_horizontal_margin"
+            android:paddingTop="@dimen/activity_vertical_margin">
+
+
+            <ListView
+                android:id="@android:id/list"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="fill"
+                android:layout_marginBottom="@dimen/tagged_searches_padding"
+                android:layout_marginTop="@dimen/tagged_searches_padding"
+                android:layout_weight="1" />
+
+        </LinearLayout>
+    </GridLayout>
+
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/login_with_google"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/login_with_google" />
 
 </RelativeLayout>
