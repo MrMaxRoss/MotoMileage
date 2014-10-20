@@ -3,7 +3,7 @@ package com.sortedunderbelly.motomileage;
 import java.util.Date;
 
 /**
- * Created by maxr on 5/10/14.
+ * Created by max.ross on 5/10/14.
  */
 public interface Trip extends Comparable<Trip> {
     String getId();

@@ -6,7 +6,7 @@ import com.sortedunderbelly.motomileage.LocalDatabaseTripStorage;
 import com.sortedunderbelly.motomileage.TripStorage;
 
 /**
- * Created by maxr on 6/7/14.
+ * Created by max.ross on 6/7/14.
  */
 public class LocalDatabaseTripStorageTest extends BaseTripStorageTest {
 

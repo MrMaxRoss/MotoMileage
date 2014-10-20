@@ -8,7 +8,7 @@ import android.os.Bundle;
 import java.util.Calendar;
 
 /**
- * Created by maxr on 5/9/14.
+ * Created by max.ross on 5/9/14.
  */
 public class DatePickerFragment extends DialogFragment {
 

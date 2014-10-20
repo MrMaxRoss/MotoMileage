@@ -3,7 +3,7 @@ package com.sortedunderbelly.motomileage;
 import android.content.ContextWrapper;
 
 /**
- * Created by maxr on 5/25/14.
+ * Created by max.ross on 5/25/14.
  */
 public enum StorageSystem {
     LOCAL_PREFERENCES {

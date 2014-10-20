@@ -1,7 +1,7 @@
 package com.sortedunderbelly.motomileage;
 
 /**
- * Created by maxr on 8/25/14.
+ * Created by max.ross on 8/25/14.
  */
 public interface StorageCallbacks {
     void onNewTrip(Trip trip);

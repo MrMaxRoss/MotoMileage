@@ -13,7 +13,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by maxr on 5/25/14.
+ * Created by max.ross on 5/25/14.
  */
 public class LocalDatabaseTripStorage extends SQLiteOpenHelper implements TripStorage {
 
@@ -142,12 +142,12 @@ public class LocalDatabaseTripStorage extends SQLiteOpenHelper implements TripSt
 
     @Override
     public void saveTripFilter(TripFilter tripFilter) {
-        // TODO(maxr): implement
+        // TODO(max.ross): implement
     }
 
     @Override
     public TripFilter getLastTripFilter() {
-        // TODO(maxr): implement
+        // TODO(max.ross): implement
         return TripFilter.MONTH_THUS_FAR;
     }
 

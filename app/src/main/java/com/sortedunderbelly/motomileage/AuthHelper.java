@@ -21,7 +21,7 @@ import com.google.android.gms.plus.Plus;
 import java.io.IOException;
 
 /**
- * Created by maxr on 10/12/14.
+ * Created by max.ross on 10/12/14.
  */
 public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener, AuthCallbacks {

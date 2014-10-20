@@ -12,7 +12,7 @@ import java.text.DateFormat;
 import java.util.List;
 
 /**
- * Created by maxr on 5/12/14.
+ * Created by max.ross on 5/12/14.
  */
 public class MyArrayAdapter extends ArrayAdapter<Trip> {
 

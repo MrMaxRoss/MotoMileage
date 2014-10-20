@@ -54,7 +54,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
     private ArrayAdapter<Trip> adapter; // binds trip strings to ListView
     private Integer positionOfTripToUpdate = null;
 
-    // TODO(maxr): DateFormat is not threadsafe. Do we need to care about that in an android app?
+    // TODO(max.ross): DateFormat is not threadsafe. Do we need to care about that in an android app?
     private DateFormat dateFormat;
 
     // called when MainActivity is first created
@@ -139,7 +139,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
                 saveTrip(date, tripDescText.getText().toString(), distance);
                 clearInputs();
 
-                // TODO(maxr): Find out what this does
+                // TODO(max.ross): Find out what this does
                 ((InputMethodManager) getSystemService(
                         Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(
                         tripDistanceText.getWindowToken(), 0);

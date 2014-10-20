@@ -1,7 +1,7 @@
 package com.sortedunderbelly.motomileage;
 
 /**
- * Created by maxr on 7/26/14.
+ * Created by max.ross on 7/26/14.
  */
 public abstract class BaseTrip implements Trip {
     @Override

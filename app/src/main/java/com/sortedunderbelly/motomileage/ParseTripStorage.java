@@ -10,7 +10,7 @@ import com.parse.ParseQuery;
 import java.util.ArrayList;
 
 /**
- * Created by maxr on 7/26/14.
+ * Created by max.ross on 7/26/14.
  */
 public class ParseTripStorage extends NoAuthTripStorage {
 
@@ -45,7 +45,7 @@ public class ParseTripStorage extends NoAuthTripStorage {
         tripObject.saveEventually();
         Trip newTrip = new ParseTripImpl(tripObject);
         notifier.onNewTrip(newTrip);
-        // TODO(maxr) Distinguish between create and update and fire the proper notification
+        // TODO(max.ross) Distinguish between create and update and fire the proper notification
         return newTrip;
     }
 

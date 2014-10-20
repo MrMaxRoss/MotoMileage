@@ -15,7 +15,7 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
- * Created by maxr on 6/7/14.
+ * Created by max.ross on 6/7/14.
  */
 public abstract class BaseTripStorageTest extends AndroidTestCase {
     static final StorageCallbacks STORAGE_CALLBACKS = new StorageCallbacks() {

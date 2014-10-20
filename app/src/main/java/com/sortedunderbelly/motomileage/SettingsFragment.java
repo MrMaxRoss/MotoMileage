@@ -10,7 +10,7 @@ import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 
 /**
- * Created by maxr on 5/17/14.
+ * Created by max.ross on 5/17/14.
  */
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     // creates preferences GUI from preferences.xml file in res/xml

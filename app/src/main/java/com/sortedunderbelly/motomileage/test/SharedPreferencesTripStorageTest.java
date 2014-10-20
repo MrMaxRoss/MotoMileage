@@ -6,7 +6,7 @@ import com.sortedunderbelly.motomileage.SharedPreferencesTripStorage;
 import com.sortedunderbelly.motomileage.TripStorage;
 
 /**
- * Created by maxr on 6/7/14.
+ * Created by max.ross on 6/7/14.
  */
 public class SharedPreferencesTripStorageTest extends BaseTripStorageTest {
     private static final String TEST_FILE_PREFIX = "test_";

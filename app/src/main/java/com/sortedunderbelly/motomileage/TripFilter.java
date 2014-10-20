@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by maxr on 5/17/14.
+ * Created by max.ross on 5/17/14.
  */
 public enum TripFilter {
     MONTH_THUS_FAR {

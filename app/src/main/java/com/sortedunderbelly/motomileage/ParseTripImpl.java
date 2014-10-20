@@ -5,7 +5,7 @@ import com.parse.ParseObject;
 import java.util.Date;
 
 /**
- * Created by maxr on 7/26/14.
+ * Created by max.ross on 7/26/14.
  */
 public class ParseTripImpl extends BaseTrip {
     private final ParseObject obj;

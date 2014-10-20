@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by maxr on 7/26/14.
+ * Created by max.ross on 7/26/14.
  */
 public class FirebaseTripStorage implements TripStorage {
 
@@ -32,7 +32,7 @@ public class FirebaseTripStorage implements TripStorage {
     private final Firebase firebaseRef;
 
     // All trips for the user, unfiltered.
-    // TODO(maxr): Implement serverside filtering
+    // TODO(max.ross): Implement serverside filtering
     private final LinkedList<Trip> trips = new LinkedList<Trip>();
     private final Map<String, Trip> tripsById = new HashMap<String, Trip>();
     private TripFilter tripFilter = TripFilter.MONTH_THUS_FAR;
@@ -218,7 +218,7 @@ public class FirebaseTripStorage implements TripStorage {
             };
             tripsRef.addChildEventListener(tripListener);
         } else {
-            // TODO(maxr): Why is this needed? Seems like deauth somehow poisons the listeners.
+            // TODO(max.ross): Why is this needed? Seems like deauth somehow poisons the listeners.
             tripsRef.removeEventListener(tripListener);
             tripsRef.addChildEventListener(tripListener);
         }

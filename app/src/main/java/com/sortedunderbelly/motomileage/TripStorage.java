@@ -3,7 +3,7 @@ package com.sortedunderbelly.motomileage;
 import java.util.List;
 
 /**
- * Created by maxr on 5/10/14.
+ * Created by max.ross on 5/10/14.
  */
 public interface TripStorage {
     Trip save(Trip trip);

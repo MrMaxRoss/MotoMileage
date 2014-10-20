@@ -11,7 +11,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Created by maxr on 5/10/14.
+ * Created by max.ross on 5/10/14.
  */
 public class SharedPreferencesTripStorage extends NoAuthTripStorage {
     // name of SharedPreferences XML file that stores the saved tripStorage
@@ -96,8 +96,7 @@ public class SharedPreferencesTripStorage extends NoAuthTripStorage {
         if (!tripIds.contains(tripId)) {
             return null;
         }
-        Date date = new Date(appData.getLong(tripId + DATE_SUFFIX, 0));
-        // TODO(maxr): Find out what the second param to getLong is
+        // TODO(max.ross): Find out what the second param to getLong is
         return new TripImpl(
                 tripId,
                 new Date(appData.getLong(tripId + DATE_SUFFIX, 0)),

@@ -3,7 +3,7 @@ package com.sortedunderbelly.motomileage;
 import java.util.Date;
 
 /**
- * Created by maxr on 7/26/14.
+ * Created by max.ross on 7/26/14.
  */
 public class TripImpl extends BaseTrip {
     private final String id;
