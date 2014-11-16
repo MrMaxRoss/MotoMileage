@@ -27,8 +27,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.SignInButton;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -42,7 +40,6 @@ import java.util.NoSuchElementException;
 public class MainActivity extends ListActivity implements DatePickerDialog.OnDateSetListener,
         SharedPreferences.OnSharedPreferenceChangeListener, StorageCallbacks {
 
-    private AuthHelper authHelper;
     private EditText tripDateText;
     private EditText tripDescText;
     private EditText tripDistanceText;
@@ -62,7 +59,6 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        authHelper = new AuthHelper(this, findViewById(R.id.gridLayout), (SignInButton) findViewById(R.id.login_with_google));
 
         dateFormat = android.text.format.DateFormat.getDateFormat(this);
 
@@ -93,6 +89,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
                 showDatePickerDialog(view);
             }
         });
+
         SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         defaultSharedPrefs.registerOnSharedPreferenceChangeListener(this);
         initStorage(defaultSharedPrefs);
@@ -332,10 +329,26 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // Only show the menu items if we're on the main screen
+        if (findViewById(R.id.gridLayout).getVisibility() == View.VISIBLE) {
+            menu.setGroupVisible(0, true);
+            // logout menu is not visible by default. Storage impl can change that if it wants.
+            menu.findItem(R.id.action_logout).setVisible(false);
+            storage.onPrepareOptionsMenu(menu);
+        } else {
+            // main screen is not visible so disable all menu items
+            menu.setGroupVisible(0, false);
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_logout) {
-            authHelper.logout();
+            storage.logout();
+            onFullRefresh();
             return true;
         } else if (id == R.id.action_settings) {
             Intent preferencesIntent = new Intent(this, SettingsActivity.class);
@@ -364,10 +377,10 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         } catch (IllegalArgumentException iae) {
             storageSystem = StorageSystem.FIREBASE;
         }
-        storage = storageSystem.getTripStorage(this, this, authHelper);
+        storage = storageSystem.getTripStorage(this, this);
+        onFullRefresh();
     }
 
-    @Override
     public void onFullRefresh() {
         TripFilter tripFilter = storage.getLastTripFilter();
         // Set the value here without the listener so that we don't trigger an update
@@ -395,7 +408,6 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         }
     }
 
-    @Override
     public void onNewTrip(Trip trip) {
         int currentTotalDistance = Integer.valueOf(tripTotalValueText.getText().toString());
         TripFilter filter = getCurrentFilter();
@@ -416,7 +428,6 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         throw new NoSuchElementException();
     }
 
-    @Override
     public void onUpdatedTrip(Trip updatedTrip) {
         // Get the index of the updated trip
         int index;
@@ -443,7 +454,6 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         notifyDataSetChanged(newTotalDistance);
     }
 
-    @Override
     public void onDeletedTrip(String deletedTripId) {
         // Get the index of the deleted trip
         int index;
@@ -466,14 +476,10 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        authHelper.onActivityResult(requestCode, resultCode, data);
+        storage.onActivityResult(requestCode, resultCode, data);
     }
 
-    void login(String token) {
-        storage.login(token);
-    }
-
-    void logout(AuthStruct authStruct) {
-        storage.logout(authStruct);
+    public TripStorage getStorage() {
+        return storage;
     }
 }

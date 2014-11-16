@@ -54,5 +54,6 @@
     <!-- In order for this demo to work you need to provide your own Firebase, API keys and App IDs -->
     <string name="firebase_url">https://intense-fire-8866.firebaseio.com</string>
     <string name="action_logout">Logout</string>
+    <string name="initialTotalTextValue">0</string>
 
 </resources>

@@ -27,8 +27,7 @@ public class SharedPreferencesTripStorage extends NoAuthTripStorage {
     private final SharedPreferences appData;
     private final StorageCallbacks storageCallbacks;
 
-    public SharedPreferencesTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
-        super(authCallbacks);
+    public SharedPreferencesTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks) {
         // get the SharedPreferences containing the user's saved tripsRef
         this.tripIds = contextWrapper.getSharedPreferences(TRIP_IDS, Context.MODE_PRIVATE);
         this.appData = contextWrapper.getSharedPreferences(APP_DATA, Context.MODE_PRIVATE);
@@ -137,10 +136,4 @@ public class SharedPreferencesTripStorage extends NoAuthTripStorage {
             return TripFilter.MONTH_THUS_FAR;
         }
     }
-
-    @Override
-    public void logout(AuthStruct authStruct) {
-
-    }
-
 }

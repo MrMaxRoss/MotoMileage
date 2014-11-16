@@ -17,9 +17,9 @@ public class ParseTripStorage extends NoAuthTripStorage {
     public static class ParseTripStorageFactory {
         private static ParseTripStorage INSTANCE = null;
 
-        public synchronized ParseTripStorage get(Context context, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
+        public synchronized ParseTripStorage get(Context context, MainActivity activity) {
             if (INSTANCE == null ) {
-                INSTANCE = new ParseTripStorage(context, storageCallbacks, authCallbacks);
+                INSTANCE = new ParseTripStorage(context, activity);
             }
             return INSTANCE;
         }
@@ -27,13 +27,13 @@ public class ParseTripStorage extends NoAuthTripStorage {
 
     public static final ParseTripStorageFactory FACTORY = new ParseTripStorageFactory();
 
-    private final StorageCallbacks notifier;
+    private final MainActivity activity;
 
-    private ParseTripStorage(Context context, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
-        super(authCallbacks);
+    private ParseTripStorage(Context context, MainActivity activity) {
+        this.activity = activity;
         Parse.initialize(context, "rBizcZAAvSpLmZ5Xl7wy6JS8PLFmk1VRXOsX6Upi", "JUdQXkDdJY12rbSh4pFDLxgBoz2FBAcW2VZgSmOR");
         Parse.enableLocalDatastore(context);
-        this.notifier = storageCallbacks;
+        login(null);
     }
 
     @Override
@@ -44,7 +44,7 @@ public class ParseTripStorage extends NoAuthTripStorage {
         tripObject.put("distance", trip.getDistance());
         tripObject.saveEventually();
         Trip newTrip = new ParseTripImpl(tripObject);
-        notifier.onNewTrip(newTrip);
+        activity.onNewTrip(newTrip);
         // TODO(max.ross) Distinguish between create and update and fire the proper notification
         return newTrip;
     }
@@ -53,7 +53,7 @@ public class ParseTripStorage extends NoAuthTripStorage {
     public boolean delete(String tripId) {
         ParseObject obj = lookup(tripId).getObj();
         obj.deleteEventually();
-        notifier.onDeletedTrip(tripId);
+        activity.onDeletedTrip(tripId);
         return true;
     }
 
@@ -84,15 +84,4 @@ public class ParseTripStorage extends NoAuthTripStorage {
         // TODO
         return TripFilter.YEAR_THUS_FAR;
     }
-
-    @Override
-    public void login(String authToken) {
-
-    }
-
-    @Override
-    public void logout(AuthStruct authStruct) {
-
-    }
-
 }

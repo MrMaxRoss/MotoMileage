@@ -2,11 +2,13 @@ package com.sortedunderbelly.motomileage;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
+import android.view.Menu;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -37,13 +39,12 @@ public class LocalDatabaseTripStorage extends SQLiteOpenHelper implements TripSt
 
     private final SQLiteDatabase db;
     private final StorageCallbacks storageCallbacks;
-    private final AuthCallbacks authCallbacks;
 
-    public LocalDatabaseTripStorage(Context context, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
+    public LocalDatabaseTripStorage(Context context, StorageCallbacks storageCallbacks) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.db = getWritableDatabase();
         this.storageCallbacks = storageCallbacks;
-        this.authCallbacks = authCallbacks;
+        login(null);
     }
 
     public void close() {
@@ -153,11 +154,17 @@ public class LocalDatabaseTripStorage extends SQLiteOpenHelper implements TripSt
 
     @Override
     public void login(String authToken) {
-        authCallbacks.onAuthStateChanged(new AuthStruct("noauth", "noauth", ""), null);
     }
 
     @Override
-    public void logout(AuthStruct authStruct) {
+    public void logout() {
+    }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
     }
 }

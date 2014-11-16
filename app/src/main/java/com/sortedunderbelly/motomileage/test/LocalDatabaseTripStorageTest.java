@@ -15,7 +15,7 @@ public class LocalDatabaseTripStorageTest extends BaseTripStorageTest {
     @Override
     TripStorage newTripStorage() {
         RenamingDelegatingContext rdc = new RenamingDelegatingContext(getContext(), TEST_FILE_PREFIX);
-        return new LocalDatabaseTripStorage(rdc, STORAGE_CALLBACKS, AUTH_CALLBACKS);
+        return new LocalDatabaseTripStorage(rdc, STORAGE_CALLBACKS);
     }
 
     LocalDatabaseTripStorage getStorage() {

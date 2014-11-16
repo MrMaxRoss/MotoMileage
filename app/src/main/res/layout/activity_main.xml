@@ -126,6 +126,7 @@
 
             <TextView
                 android:id="@+id/totalTextValueView"
+                android:text="@string/initialTotalTextValue"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|fill_horizontal"

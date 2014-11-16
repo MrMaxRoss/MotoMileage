@@ -7,45 +7,45 @@ import android.content.ContextWrapper;
  */
 public enum StorageSystem {
     LOCAL_PREFERENCES {
-        TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
-            return new SharedPreferencesTripStorage(contextWrapper, storageCallbacks, authCallbacks);
+        TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
+            return new SharedPreferencesTripStorage(contextWrapper, activity);
         }
     },
     LOCAL_DATABASE {
-        TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
-            return new LocalDatabaseTripStorage(contextWrapper, storageCallbacks, authCallbacks);
+        TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
+            return new LocalDatabaseTripStorage(contextWrapper, activity);
         }
     },
     FIREBASE {
-        TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
-            return new FirebaseTripStorage(contextWrapper, storageCallbacks, authCallbacks);
+        TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
+            return new FirebaseTripStorage(contextWrapper, activity);
         }
     },
     CLOUD_SAVE_V1 {
-        TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
+        TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
             return null;
         }
     },
     CLOUD_SAVE_V2 {
-        TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
+        TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
             return null;
         }
     },
     PARSE {
-        TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
-            return ParseTripStorage.FACTORY.get(contextWrapper, storageCallbacks, authCallbacks);
+        TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
+            return ParseTripStorage.FACTORY.get(contextWrapper, activity);
         }
     },
     DROPBOX {
-        TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
+        TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
             return null;
         }
     },
     GOOGLE_DRIVE {
-        TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks notifier, AuthCallbacks authCallbacks) {
+        TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
             return null;
         }
     };
 
-    abstract TripStorage getTripStorage(ContextWrapper contextWrapper, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks);
+    abstract TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity);
 }

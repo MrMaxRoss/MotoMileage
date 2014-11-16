@@ -14,7 +14,7 @@ public class SharedPreferencesTripStorageTest extends BaseTripStorageTest {
     @Override
     TripStorage newTripStorage() {
         RenamingDelegatingContext rdc = new RenamingDelegatingContext(getContext(), TEST_FILE_PREFIX);
-        return new SharedPreferencesTripStorage(rdc, STORAGE_CALLBACKS, AUTH_CALLBACKS);
+        return new SharedPreferencesTripStorage(rdc, STORAGE_CALLBACKS);
     }
 
     SharedPreferencesTripStorage getStorage() {

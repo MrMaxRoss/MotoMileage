@@ -1,18 +1,29 @@
 package com.sortedunderbelly.motomileage;
 
+import android.content.Intent;
+import android.view.Menu;
+
 /**
  * Created by max.ross on 10/17/14.
  */
 public abstract class NoAuthTripStorage implements TripStorage {
 
-    private final AuthCallbacks authCallbacks;
-
-    NoAuthTripStorage(AuthCallbacks authCallbacks) {
-        this.authCallbacks = authCallbacks;
+    NoAuthTripStorage() {
     }
 
     @Override
-    public void login(String authToken) {
-        authCallbacks.onAuthStateChanged(new AuthStruct("noauth", "noauth", ""), null);
+    public final void login(String authToken) {
+    }
+
+    @Override
+    public final void logout() {
+    }
+
+    @Override
+    public final void onActivityResult(int requestCode, int resultCode, Intent data) {
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
     }
 }

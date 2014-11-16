@@ -1,7 +1,9 @@
 package com.sortedunderbelly.motomileage;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
+import android.view.Menu;
 
 import com.firebase.client.AuthData;
 import com.firebase.client.ChildEventListener;
@@ -26,8 +28,8 @@ public class FirebaseTripStorage implements TripStorage {
 
     private static final String USER_DATA_PATH = "users";
 
-    private final StorageCallbacks storageCallbacks;
-    private final AuthCallbacks authCallbacks;
+    private final MainActivity activity;
+    private final AuthHelper authHelper;
     private String userId;
     private final Firebase firebaseRef;
 
@@ -41,9 +43,9 @@ public class FirebaseTripStorage implements TripStorage {
     private ChildEventListener tripListener;
     boolean isInitialized = false; // true after we've received our callback with all the user data
 
-    public FirebaseTripStorage(Context context, StorageCallbacks storageCallbacks, AuthCallbacks authCallbacks) {
-        this.storageCallbacks = storageCallbacks;
-        this.authCallbacks = authCallbacks;
+    public FirebaseTripStorage(Context context, MainActivity mainActivity) {
+        this.activity = mainActivity;
+        authHelper = new AuthHelper(mainActivity);
         Firebase.setAndroidContext(context);
         firebaseRef = new Firebase(context.getResources().getString(R.string.firebase_url));
 
@@ -78,23 +80,23 @@ public class FirebaseTripStorage implements TripStorage {
 
         @Override
         public void onAuthenticationError(FirebaseError firebaseError) {
-            authCallbacks.onAuthStateChanged(null, firebaseError.toString());
+            authHelper.onAuthStateChanged(null, firebaseError.toString());
         }
     }
 
     /**
-     * Unauthenticate from Firebase.
+     * Deauthenticate from Firebase.
      */
     @Override
-    public void logout(AuthStruct authStruct) {
-        if (authStruct != null) {
+    public void logout() {
+        if (firebaseRef.getAuth() != null) {
             /* logout of Firebase */
             firebaseRef.unauth();
         }
         userId = null;
         isInitialized = false;
         clearData();
-        storageCallbacks.onFullRefresh();
+        authHelper.logout();
     }
 
     private void onAuthStateChanged(AuthData authData) {
@@ -102,7 +104,7 @@ public class FirebaseTripStorage implements TripStorage {
             userId = authData.getUid();
             establishListeners();
         }
-        authCallbacks.onAuthStateChanged(authDataToAuthStruct(authData), null);
+        authHelper.onAuthStateChanged(authDataToAuthStruct(authData), null);
     }
 
     private Firebase getTripsRef() {
@@ -147,7 +149,7 @@ public class FirebaseTripStorage implements TripStorage {
                         }
                     }
                 }
-                storageCallbacks.onFullRefresh();
+                activity.onFullRefresh();
 
                 if (writeFilter) {
                     // no data stored so write the default value
@@ -184,7 +186,7 @@ public class FirebaseTripStorage implements TripStorage {
                     if (!tripsById.containsKey(newTrip.getId())) {
                         trips.add(newTrip);
                         tripsById.put(newTrip.getId(), newTrip);
-                        storageCallbacks.onNewTrip(newTrip);
+                        activity.onNewTrip(newTrip);
                     }
                 }
 
@@ -194,7 +196,7 @@ public class FirebaseTripStorage implements TripStorage {
                     int index = getTripIndex(changedTrip);
                     trips.set(index, changedTrip);
                     tripsById.put(changedTrip.getId(), changedTrip);
-                    storageCallbacks.onUpdatedTrip(changedTrip);
+                    activity.onUpdatedTrip(changedTrip);
                 }
 
                 @Override
@@ -203,7 +205,7 @@ public class FirebaseTripStorage implements TripStorage {
                     int index = getTripIndex(deletedTrip);
                     trips.remove(index);
                     tripsById.remove(deletedTrip.getId());
-                    storageCallbacks.onDeletedTrip(deletedTrip.getId());
+                    activity.onDeletedTrip(deletedTrip.getId());
                 }
 
                 @Override
@@ -296,5 +298,15 @@ public class FirebaseTripStorage implements TripStorage {
     @SuppressWarnings("unchecked")
     private static Map<String, Object> mapFromSnapshot(DataSnapshot snapshot) {
         return (Map<String, Object>) snapshot.getValue();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        authHelper.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.action_logout).setVisible(true);
     }
 }

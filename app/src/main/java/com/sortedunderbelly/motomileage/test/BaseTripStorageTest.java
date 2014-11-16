@@ -2,8 +2,6 @@ package com.sortedunderbelly.motomileage.test;
 
 import android.test.AndroidTestCase;
 
-import com.sortedunderbelly.motomileage.AuthCallbacks;
-import com.sortedunderbelly.motomileage.AuthStruct;
 import com.sortedunderbelly.motomileage.StorageCallbacks;
 import com.sortedunderbelly.motomileage.Trip;
 import com.sortedunderbelly.motomileage.TripImpl;
@@ -36,13 +34,6 @@ public abstract class BaseTripStorageTest extends AndroidTestCase {
 
         @Override
         public void onFullRefresh() {
-
-        }
-    };
-
-    static final AuthCallbacks AUTH_CALLBACKS = new AuthCallbacks() {
-        @Override
-        public void onAuthStateChanged(AuthStruct authStruct, String error) {
 
         }
     };

@@ -24,7 +24,7 @@ import java.io.IOException;
  * Created by max.ross on 10/12/14.
  */
 public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener, AuthCallbacks {
+        GoogleApiClient.OnConnectionFailedListener {
 
     /* A tag that is used for logging statements */
     private static final String TAG = "AuthHelper";
@@ -54,14 +54,14 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
     private ConnectionResult googleConnectionResult;
 
     /* The login button for Google */
-    private SignInButton googleLoginButton;
+    private final SignInButton googleLoginButton;
 
-    private View gridLayout;
+    private final View gridLayout;
 
-    public AuthHelper(MainActivity activity, View gridLayout, SignInButton googleLoginButton) {
+    public AuthHelper(MainActivity activity) {
         this.activity = activity;
-        this.gridLayout = gridLayout;
-        this.googleLoginButton = googleLoginButton;
+        this.gridLayout = activity.findViewById(R.id.gridLayout);
+        this.googleLoginButton = (SignInButton) activity.findViewById(R.id.login_with_google);
         googleLoginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,7 +149,7 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
             protected void onPostExecute(String token) {
                 googleLoginClicked = false;
                 if (token != null) {
-                    activity.login(token);
+                    activity.getStorage().login(token);
                 } else if (errorMessage != null) {
                     authProgressDialog.hide();
                     activity.simpleErrorDialog(errorMessage);
@@ -164,7 +164,6 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
         /* Connected with Google API, use this to authenticate */
         getGoogleOAuthTokenAndLogin();
     }
-
 
     @Override
     public void onConnectionFailed(ConnectionResult result) {
@@ -190,6 +189,7 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
 
     private void setAuthenticatedUser(/* @Nullable */AuthStruct authStruct) {
         this.authStruct = authStruct;
+        activity.invalidateOptionsMenu();
         if (authStruct != null) {
             /* Hide all the login buttons */
             googleLoginButton.setVisibility(View.GONE);
@@ -221,7 +221,6 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
         }
     }
 
-    @Override
     public void onAuthStateChanged(/* @Nullable */AuthStruct authStruct, String error) {
         authProgressDialog.hide();
         if (error != null) {
@@ -235,7 +234,6 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
      */
     public void logout() {
         if (authStruct != null) {
-            activity.logout(authStruct);
             /* Logout of any of the Frameworks. This step is optional, but ensures the user is not logged into
              * Google+
              */

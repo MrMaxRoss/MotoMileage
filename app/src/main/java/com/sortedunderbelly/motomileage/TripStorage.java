@@ -1,5 +1,8 @@
 package com.sortedunderbelly.motomileage;
 
+import android.content.Intent;
+import android.view.Menu;
+
 import java.util.List;
 
 /**
@@ -12,6 +15,8 @@ public interface TripStorage {
     List<Trip> allTrips();
     void saveTripFilter(TripFilter tripFilter);
     TripFilter getLastTripFilter();
-    void logout(AuthStruct authStruct);
     void login(String authToken);
+    void logout();
+    void onActivityResult(int requestCode, int resultCode, Intent data);
+    void onPrepareOptionsMenu(Menu menu);
 }
