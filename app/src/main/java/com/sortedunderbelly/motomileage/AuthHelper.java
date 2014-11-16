@@ -79,6 +79,7 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
                 }
             }
         });
+
         /* Setup the Google API object to allow Google+ logins */
         googleApiClient = new GoogleApiClient.Builder(this.activity)
                 .addConnectionCallbacks(this)
@@ -87,15 +88,12 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
                 .addScope(Plus.SCOPE_PLUS_LOGIN)
                 .build();
 
-
         authProgressDialog = new ProgressDialog(this.activity);
         authProgressDialog.setTitle("Loading");
         authProgressDialog.setMessage("Authenticating with Moto Mileage...");
         authProgressDialog.setCancelable(true);
-        // authProgressDialog.show();
+        authProgressDialog.show();
 
-        // We start off in the unauthenticated state
-        setAuthenticatedUser(null);
     }
 
     /* A helper method to resolve the current ConnectionResult error. */
@@ -196,7 +194,6 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
             /* Hide all the login buttons */
             googleLoginButton.setVisibility(View.GONE);
             gridLayout.setVisibility(View.VISIBLE);
-
         } else {
             /* No authenticated user show all the login buttons */
             googleLoginButton.setVisibility(View.VISIBLE);
@@ -234,7 +231,7 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
     }
 
     /**
-     * Unauthenticate from from providers.
+     * Unauthenticate from providers.
      */
     public void logout() {
         if (authStruct != null) {

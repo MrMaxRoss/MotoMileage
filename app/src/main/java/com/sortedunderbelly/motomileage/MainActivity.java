@@ -469,11 +469,11 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         authHelper.onActivityResult(requestCode, resultCode, data);
     }
 
-    public void login(String token) {
+    void login(String token) {
         storage.login(token);
     }
 
-    public void logout(AuthStruct authStruct) {
+    void logout(AuthStruct authStruct) {
         storage.logout(authStruct);
     }
 }
