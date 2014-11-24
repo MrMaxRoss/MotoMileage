@@ -8,6 +8,7 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.ArrayList;
+import java.util.Set;
 
 /**
  * Created by max.ross on 7/26/14.
@@ -83,5 +84,25 @@ public class ParseTripStorage extends NoAuthTripStorage {
     public TripFilter getLastTripFilter() {
         // TODO
         return TripFilter.YEAR_THUS_FAR;
+    }
+
+    @Override
+    public void saveReminderTypes(Set<ReminderType> reminderTypes) {
+
+    }
+
+    @Override
+    public Set<ReminderType> getReminderTypes() {
+        return null;
+    }
+
+    @Override
+    public void saveReminderSchedule(ReminderSchedule schedule) {
+
+    }
+
+    @Override
+    public ReminderSchedule getReminderSchedule() {
+        return null;
     }
 }

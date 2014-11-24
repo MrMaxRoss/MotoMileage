@@ -13,6 +13,7 @@ import android.view.Menu;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by max.ross on 5/25/14.
@@ -166,5 +167,25 @@ public class LocalDatabaseTripStorage extends SQLiteOpenHelper implements TripSt
 
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
+    }
+
+    @Override
+    public void saveReminderTypes(Set<ReminderType> reminderTypes) {
+
+    }
+
+    @Override
+    public Set<ReminderType> getReminderTypes() {
+        return null;
+    }
+
+    @Override
+    public void saveReminderSchedule(ReminderSchedule schedule) {
+
+    }
+
+    @Override
+    public ReminderSchedule getReminderSchedule() {
+        return null;
     }
 }

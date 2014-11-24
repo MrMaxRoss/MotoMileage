@@ -44,6 +44,14 @@
     <string name="storageChoiceSummary">Storage System</string>
     <string name="prefStorageChoiceKey">pref_storageChoice</string>
     <string name="storageChangedText">Switched storage!</string>
+    <string name="reminderChoiceTitle">Reminder</string>
+    <string name="reminderChoiceSummary">Reminder</string>
+    <string name="prefReminderChoiceKey">pref_reminderChoice</string>
+    <string name="reminderChangedText">Switched reminder type!</string>
+    <string name="reminderScheduleChoiceTitle">Reminder Schedule</string>
+    <string name="reminderScheduleChoiceSummary">Reminder Schedule</string>
+    <string name="prefReminderScheduleChoiceKey">pref_reminderScheduleChoice</string>
+    <string name="reminderScheduleChangedText">Switched reminder schedule!</string>
     <string name="facebook_app_id">788681817854677</string>
 
     <string name="login_with_facebook">Login with Facebook</string>
@@ -52,7 +60,8 @@
     <string name="login_anonymously">Login Anonymously</string>
 
     <!-- In order for this demo to work you need to provide your own Firebase, API keys and App IDs -->
-    <string name="firebase_url">https://intense-fire-8866.firebaseio.com</string>
+    <string name="firebase_url">https://motomileage-test.firebaseio.com</string>
+    <!--<string name="firebase_url">https://intense-fire-8866.firebaseio.com</string>-->
     <string name="action_logout">Logout</string>
     <string name="initialTotalTextValue">0</string>
 

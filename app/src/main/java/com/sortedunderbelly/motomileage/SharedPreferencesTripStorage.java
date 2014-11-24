@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by max.ross on 5/10/14.
@@ -135,5 +136,25 @@ public class SharedPreferencesTripStorage extends NoAuthTripStorage {
         } catch (IllegalArgumentException iae) {
             return TripFilter.MONTH_THUS_FAR;
         }
+    }
+
+    @Override
+    public void saveReminderTypes(Set<ReminderType> reminderTypes) {
+
+    }
+
+    @Override
+    public Set<ReminderType> getReminderTypes() {
+        return null;
+    }
+
+    @Override
+    public void saveReminderSchedule(ReminderSchedule schedule) {
+
+    }
+
+    @Override
+    public ReminderSchedule getReminderSchedule() {
+        return null;
     }
 }

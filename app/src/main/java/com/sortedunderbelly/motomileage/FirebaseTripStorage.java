@@ -12,11 +12,14 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by max.ross on 7/26/14.
@@ -42,6 +45,8 @@ public class FirebaseTripStorage implements TripStorage {
     private final AuthResultHandler authResultHandler = new AuthResultHandler();
     private ChildEventListener tripListener;
     boolean isInitialized = false; // true after we've received our callback with all the user data
+    private Set<ReminderType> reminderTypes = new HashSet<ReminderType>();
+    private ReminderSchedule reminderSchedule = ReminderSchedule.NONE;
 
     public FirebaseTripStorage(Context context, MainActivity mainActivity) {
         this.activity = mainActivity;
@@ -108,7 +113,7 @@ public class FirebaseTripStorage implements TripStorage {
     }
 
     private Firebase getTripsRef() {
-        return firebaseRef.child(String.format("%s/%s/trips", USER_DATA_PATH, userId));
+        return getUserRef().child("trips");
     }
 
     private Firebase getUserRef() {
@@ -137,6 +142,24 @@ public class FirebaseTripStorage implements TripStorage {
                     if (tripFilterStr != null) {
                         tripFilter = TripFilter.valueOf(tripFilterStr);
                         writeFilter = false;
+                    }
+
+                    try {
+                        reminderSchedule = ReminderSchedule.valueOf((String) userData.get("reminderSchedule"));
+                    } catch (IllegalArgumentException iae) {
+                        // that's ok
+                    }
+
+                    @SuppressWarnings("unchecked")
+                    List<String> reminderTypeStrs = (List<String>) userData.get("reminderTypes");
+                    if (reminderTypeStrs != null) {
+                        for (String reminderTypeStr : reminderTypeStrs) {
+                            try {
+                                reminderTypes.add(ReminderType.valueOf(reminderTypeStr));
+                            } catch (IllegalArgumentException iae) {
+                                // that's ok
+                            }
+                        }
                     }
 
                     @SuppressWarnings("unchecked")
@@ -257,6 +280,45 @@ public class FirebaseTripStorage implements TripStorage {
         Firebase child = getTripsRef().child(tripId);
         child.removeValue();
         return true;
+    }
+
+    @Override
+    public void saveReminderTypes(Set<ReminderType> reminderTypes) {
+        this.reminderTypes.clear();
+        this.reminderTypes.addAll(reminderTypes);
+        Firebase remindersRef = getUserRef().child("reminderTypes");
+        remindersRef.setValue(new ArrayList<ReminderType>(reminderTypes));
+    }
+
+    @Override
+    public Set<ReminderType> getReminderTypes() {
+        return reminderTypes;
+    }
+
+    @Override
+    public void saveReminderSchedule(final ReminderSchedule schedule) {
+        this.reminderSchedule = schedule;
+        Firebase userRef = getUserRef();
+        Map<String, Object> userData = new HashMap<String, Object>();
+        userData.put("reminderSchedule", schedule.name());
+        userRef.updateChildren(userData, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError == null) {
+                    // Add an entry to signal that the cron process needs to evaluate.
+                    // There doesn't seem to be a way to add a child node that is just a key
+                    // so we write the empty string as the associated value.
+                    Map<String, Object> data = new HashMap<String, Object>();
+                    data.put(userId, "");
+                    firebaseRef.child("reminderModificationQueue").updateChildren(data);
+                }
+            }
+        });
+    }
+
+    @Override
+    public ReminderSchedule getReminderSchedule() {
+        return reminderSchedule;
     }
 
     @Override

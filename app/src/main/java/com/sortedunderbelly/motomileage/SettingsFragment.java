@@ -66,8 +66,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         }
         if (p instanceof MultiSelectListPreference) {
-            EditTextPreference editTextPref = (EditTextPreference) p;
-            p.setSummary(editTextPref.getText());
+            MultiSelectListPreference pref = (MultiSelectListPreference) p;
+            if (pref.getValues().isEmpty()) {
+                p.setSummary("None");
+            } else {
+                p.setSummary(pref.getValues().toString());
+            }
         }
     }
 }

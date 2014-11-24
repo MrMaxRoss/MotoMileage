@@ -34,8 +34,10 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 
 public class MainActivity extends ListActivity implements DatePickerDialog.OnDateSetListener,
         SharedPreferences.OnSharedPreferenceChangeListener, StorageCallbacks {
@@ -53,6 +55,9 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
 
     // TODO(max.ross): DateFormat is not threadsafe. Do we need to care about that in an android app?
     private DateFormat dateFormat;
+    private String prefStorageChoiceKey;
+    private String prefReminderChoiceKey;
+    private String prefReminderScheduleChoiceKey;
 
     // called when MainActivity is first created
     @Override
@@ -61,6 +66,10 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         setContentView(R.layout.activity_main);
 
         dateFormat = android.text.format.DateFormat.getDateFormat(this);
+        prefStorageChoiceKey = getResources().getString(R.string.prefStorageChoiceKey);
+        prefReminderChoiceKey = getResources().getString(R.string.prefReminderChoiceKey);
+        prefReminderScheduleChoiceKey = getResources().getString(R.string.prefReminderScheduleChoiceKey);
+
 
         // get references to the EditTexts
         tripDateText = (EditText) findViewById(R.id.tripDate);
@@ -91,8 +100,8 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         });
 
         SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        defaultSharedPrefs.registerOnSharedPreferenceChangeListener(this);
         initStorage(defaultSharedPrefs);
+        defaultSharedPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
     private void filterAllTrips(TripFilter filter) {
@@ -360,20 +369,34 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        String prefStorageChoiceKey = getResources().getString(R.string.prefStorageChoiceKey);
         if (key.equals(prefStorageChoiceKey)) {
             initStorage(sharedPreferences);
             Toast.makeText(getApplicationContext(), R.string.storageChangedText, Toast.LENGTH_SHORT).show();
+        } else if (key.equals(prefReminderChoiceKey)) {
+            Set<String> reminderChoices = sharedPreferences.getStringSet(prefReminderChoiceKey, Collections.<String>emptySet());
+            Set<ReminderType> set = new HashSet<ReminderType>();
+            for (String choice : reminderChoices) {
+                set.add(ReminderType.valueOf(choice));
+            }
+            storage.saveReminderTypes(set);
+        } else if (key.equals(prefReminderScheduleChoiceKey)) {
+            ReminderSchedule schedule;
+            try {
+                schedule = ReminderSchedule.valueOf(
+                        sharedPreferences.getString(prefReminderScheduleChoiceKey, ReminderSchedule.NONE.name()));
+            } catch (IllegalArgumentException iae) {
+                schedule = ReminderSchedule.NONE;
+            }
+            storage.saveReminderSchedule(schedule);
         }
     }
 
     private void initStorage(SharedPreferences preferences) {
-        String keyName = getResources().getString(R.string.prefStorageChoiceKey);
         StorageSystem storageSystem;
         try {
             // Firebase is our default storage system
             storageSystem = StorageSystem.valueOf(
-                    preferences.getString(keyName, StorageSystem.FIREBASE.name()));
+                    preferences.getString(prefStorageChoiceKey, StorageSystem.FIREBASE.name()));
         } catch (IllegalArgumentException iae) {
             storageSystem = StorageSystem.FIREBASE;
         }
@@ -406,6 +429,17 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
                 }
             });
         }
+
+        // Update preferences to have values that match storage.
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = settings.edit();
+        Set<String> reminderTypeStrings = new HashSet<String>();
+        for (ReminderType reminderType : storage.getReminderTypes()) {
+            reminderTypeStrings.add(reminderType.name());
+        }
+        editor.putStringSet(prefReminderChoiceKey, reminderTypeStrings);
+        editor.putString(prefReminderScheduleChoiceKey, storage.getReminderSchedule().name());
+        editor.apply();
     }
 
     public void onNewTrip(Trip trip) {
