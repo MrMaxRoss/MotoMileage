@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="trip_list_filter_choices">
+        <item>Month Thus Far</item>
+        <item>Last Full Month</item>
+        <item>Year Thus Far</item>
+        <item>Last Full Year</item>
+        <item>All</item>
+    </string-array>
+
+    <string-array name="storage_choices">
+        <item>Local Preferences</item>
+        <item>Local Database</item>
+        <item>Parse</item>
+        <item>Firebase</item>
+        <!--<item>Cloud Save V1</item>-->
+        <!--<item>Cloud Save V2</item>-->
+        <!--<item>DropBox</item>-->
+        <!--<item>Google Drive</item>-->
+    </string-array>
+
+    <string-array name="storage_choice_values">
+        <item>LOCAL_PREFERENCES</item>
+        <item>LOCAL_DATABASE</item>
+        <item>PARSE</item>
+        <item>FIREBASE</item>
+        <!--<item>CLOUD_SAVE_V1</item>-->
+        <!--<item>CLOUD_SAVE_V2</item>-->
+        <!--<item>DROPBOX</item>-->
+        <!--<item>GOOGLE_DRIVE</item>-->
+    </string-array>
+
+    <string-array name="reminder_choices">
+        <item>Email</item>
+        <item>Notification</item>
+    </string-array>
+
+    <string-array name="reminder_choice_values">
+        <item>EMAIL</item>
+        <item>NOTIFICATION</item>
+    </string-array>
+    <string-array name="reminder_choice_default_values" />
+
+    <string-array name="reminder_schedule_choices">
+        <item>None</item>
+        <item>Weekly</item>
+        <item>Monthly</item>
+    </string-array>
+
+    <string-array name="reminder_schedule_choice_values">
+        <item>NONE</item>
+        <item>WEEKLY</item>
+        <item>MONTHLY</item>
+    </string-array>
+
+</resources>
