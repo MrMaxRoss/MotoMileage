@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <ListPreference
+        android:entries="@array/storage_choices"
+        android:entryValues="@array/storage_choice_values"
+        android:key="@string/prefStorageChoiceKey"
+        android:persistent="true"
+        android:summary="@string/storageChoiceSummary"
+        android:title="@string/storageChoiceTitle"
+        android:defaultValue="Last Week"/>
+
+    <MultiSelectListPreference
+        android:entries="@array/reminder_choices"
+        android:entryValues="@array/reminder_choice_values"
+        android:key="@string/prefReminderChoiceKey"
+        android:persistent="true"
+        android:summary="@string/reminderChoiceSummary"
+        android:title="@string/reminderChoiceTitle"
+        android:defaultValue="@array/reminder_choice_default_values"/>
+
+    <ListPreference
+        android:entries="@array/reminder_schedule_choices"
+        android:entryValues="@array/reminder_schedule_choice_values"
+        android:key="@string/prefReminderScheduleChoiceKey"
+        android:persistent="true"
+        android:summary="@string/reminderScheduleChoiceSummary"
+        android:title="@string/reminderScheduleChoiceTitle"
+        android:defaultValue="None"/>
+
+</PreferenceScreen>
