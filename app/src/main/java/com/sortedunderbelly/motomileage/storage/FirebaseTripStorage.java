@@ -160,10 +160,12 @@ public class FirebaseTripStorage implements TripStorage {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> reminderData = (Map<String, Object>) userData.get("reminder");
                     if (reminderData != null) {
-                        try {
-                            reminderSchedule = ReminderSchedule.valueOf((String) reminderData.get("reminderSchedule"));
-                        } catch (IllegalArgumentException iae) {
-                            // that's ok
+                        if (reminderData.containsKey("reminderSchedule")) {
+                            try {
+                                reminderSchedule = ReminderSchedule.valueOf((String) reminderData.get("reminderSchedule"));
+                            } catch (IllegalArgumentException iae) {
+                                // that's ok
+                            }
                         }
 
                         @SuppressWarnings("unchecked")
@@ -323,6 +325,8 @@ public class FirebaseTripStorage implements TripStorage {
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
                     addReminderModification();
+                } else {
+                    Log.e(TAG, "Could not update reminder schedule: " + firebaseError.toString());
                 }
             }
         });
@@ -334,7 +338,14 @@ public class FirebaseTripStorage implements TripStorage {
         // so we write the empty string as the associated value.
         Map<String, Object> data = new HashMap<String, Object>();
         data.put(userId, "");
-        firebaseRef.child("reminderModificationQueue").updateChildren(data);
+        firebaseRef.child("reminderModificationQueue").updateChildren(data, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError != null) {
+                    Log.e(TAG, "Could not update reminder modification queue: " + firebaseError.toString());
+                }
+            }
+        });
     }
 
     @Override
