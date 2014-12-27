@@ -11,7 +11,7 @@ android {
 
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
@@ -29,4 +29,5 @@ dependencies {
     compile files('libs/Parse-1.5.1.jar')
     compile 'com.firebase:firebase-client-android:1.1.0+'
     compile 'com.google.android.gms:play-services:4.4.52'
+    compile 'com.squareup.okhttp:okhttp:2.1.0'
 }
