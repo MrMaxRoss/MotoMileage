@@ -1,4 +1,4 @@
-package com.sortedunderbelly.motomileage.test;
+package com.sortedunderbelly.motomileage.storage;
 
 import android.test.AndroidTestCase;
 
