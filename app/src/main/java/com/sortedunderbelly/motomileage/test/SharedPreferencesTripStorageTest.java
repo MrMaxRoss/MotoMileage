@@ -28,8 +28,4 @@ public class SharedPreferencesTripStorageTest extends BaseTripStorageTest {
         getStorage().getTripIds().edit().clear().commit();
         getStorage().getAppData().edit().clear().commit();
     }
-
-    public void testDummy() {
-
-    }
 }
