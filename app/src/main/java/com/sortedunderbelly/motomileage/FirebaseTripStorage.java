@@ -116,6 +116,10 @@ public class FirebaseTripStorage implements TripStorage {
         return getUserRef().child("trips");
     }
 
+    private Firebase getReminderRef() {
+        return getUserRef().child("reminder");
+    }
+
     private Firebase getUserRef() {
         return firebaseRef.child(String.format("%s/%s", USER_DATA_PATH, userId));
     }
@@ -144,20 +148,24 @@ public class FirebaseTripStorage implements TripStorage {
                         writeFilter = false;
                     }
 
-                    try {
-                        reminderSchedule = ReminderSchedule.valueOf((String) userData.get("reminderSchedule"));
-                    } catch (IllegalArgumentException iae) {
-                        // that's ok
-                    }
-
                     @SuppressWarnings("unchecked")
-                    List<String> reminderTypeStrs = (List<String>) userData.get("reminderTypes");
-                    if (reminderTypeStrs != null) {
-                        for (String reminderTypeStr : reminderTypeStrs) {
-                            try {
-                                reminderTypes.add(ReminderType.valueOf(reminderTypeStr));
-                            } catch (IllegalArgumentException iae) {
-                                // that's ok
+                    Map<String, Object> reminderData = (Map<String, Object>) userData.get("reminder");
+                    if (reminderData != null) {
+                        try {
+                            reminderSchedule = ReminderSchedule.valueOf((String) reminderData.get("reminderSchedule"));
+                        } catch (IllegalArgumentException iae) {
+                            // that's ok
+                        }
+
+                        @SuppressWarnings("unchecked")
+                        List<String> reminderTypeStrs = (List<String>) reminderData.get("reminderTypes");
+                        if (reminderTypeStrs != null) {
+                            for (String reminderTypeStr : reminderTypeStrs) {
+                                try {
+                                    reminderTypes.add(ReminderType.valueOf(reminderTypeStr));
+                                } catch (IllegalArgumentException iae) {
+                                    // that's ok
+                                }
                             }
                         }
                     }
@@ -286,7 +294,7 @@ public class FirebaseTripStorage implements TripStorage {
     public void saveReminderTypes(Set<ReminderType> reminderTypes) {
         this.reminderTypes.clear();
         this.reminderTypes.addAll(reminderTypes);
-        Firebase remindersRef = getUserRef().child("reminderTypes");
+        Firebase remindersRef = getReminderRef().child("reminderTypes");
         remindersRef.setValue(new ArrayList<ReminderType>(reminderTypes));
     }
 
@@ -298,22 +306,26 @@ public class FirebaseTripStorage implements TripStorage {
     @Override
     public void saveReminderSchedule(final ReminderSchedule schedule) {
         this.reminderSchedule = schedule;
-        Firebase userRef = getUserRef();
+        Firebase reminderRef = getReminderRef();
         Map<String, Object> userData = new HashMap<String, Object>();
         userData.put("reminderSchedule", schedule.name());
-        userRef.updateChildren(userData, new Firebase.CompletionListener() {
+        reminderRef.updateChildren(userData, new Firebase.CompletionListener() {
             @Override
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
-                    // Add an entry to signal that the cron process needs to evaluate.
-                    // There doesn't seem to be a way to add a child node that is just a key
-                    // so we write the empty string as the associated value.
-                    Map<String, Object> data = new HashMap<String, Object>();
-                    data.put(userId, "");
-                    firebaseRef.child("reminderModificationQueue").updateChildren(data);
+                    addReminderModification();
                 }
             }
         });
+    }
+
+    private void addReminderModification() {
+        // Add an entry to signal that the cron process needs to evaluate.
+        // There doesn't seem to be a way to add a child node that is just a key
+        // so we write the empty string as the associated value.
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put(userId, "");
+        firebaseRef.child("reminderModificationQueue").updateChildren(data);
     }
 
     @Override
