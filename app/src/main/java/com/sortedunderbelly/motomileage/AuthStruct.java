@@ -5,7 +5,7 @@ public class AuthStruct {
     private final String displayName;
     private final String authToken;
 
-    AuthStruct(String provider, String displayName, String authToken) {
+    public AuthStruct(String provider, String displayName, String authToken) {
         this.provider = provider;
         this.displayName = displayName;
         this.authToken = authToken;

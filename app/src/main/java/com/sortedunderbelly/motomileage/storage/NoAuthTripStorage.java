@@ -1,4 +1,4 @@
-package com.sortedunderbelly.motomileage;
+package com.sortedunderbelly.motomileage.storage;
 
 import android.content.Intent;
 import android.view.Menu;

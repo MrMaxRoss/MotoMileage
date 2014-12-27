@@ -1,4 +1,4 @@
-package com.sortedunderbelly.motomileage;
+package com.sortedunderbelly.motomileage.storage;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,15 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.sortedunderbelly.motomileage.AuthHelper;
+import com.sortedunderbelly.motomileage.AuthStruct;
+import com.sortedunderbelly.motomileage.MainActivity;
+import com.sortedunderbelly.motomileage.R;
+import com.sortedunderbelly.motomileage.ReminderSchedule;
+import com.sortedunderbelly.motomileage.ReminderType;
+import com.sortedunderbelly.motomileage.Trip;
+import com.sortedunderbelly.motomileage.TripFilter;
+import com.sortedunderbelly.motomileage.TripImpl;
 
 import java.util.ArrayList;
 import java.util.Date;

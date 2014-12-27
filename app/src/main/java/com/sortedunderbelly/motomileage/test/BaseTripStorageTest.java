@@ -5,7 +5,7 @@ import android.test.AndroidTestCase;
 import com.sortedunderbelly.motomileage.StorageCallbacks;
 import com.sortedunderbelly.motomileage.Trip;
 import com.sortedunderbelly.motomileage.TripImpl;
-import com.sortedunderbelly.motomileage.TripStorage;
+import com.sortedunderbelly.motomileage.storage.TripStorage;
 
 import java.util.Calendar;
 import java.util.Date;

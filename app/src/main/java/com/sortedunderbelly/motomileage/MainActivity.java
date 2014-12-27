@@ -27,6 +27,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sortedunderbelly.motomileage.storage.StorageSystem;
+import com.sortedunderbelly.motomileage.storage.TripStorage;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;

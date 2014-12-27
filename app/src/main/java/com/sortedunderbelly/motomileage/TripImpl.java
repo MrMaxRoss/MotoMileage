@@ -25,7 +25,7 @@ public class TripImpl extends BaseTrip {
     }
 
     @Override
-    String getIdInternal() {
+    public String getIdInternal() {
         return id;
     }
 

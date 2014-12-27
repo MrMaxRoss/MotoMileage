@@ -12,7 +12,7 @@ public abstract class BaseTrip implements Trip {
         return getIdInternal();
     }
 
-    abstract String getIdInternal();
+    public abstract String getIdInternal();
 
     @Override
     public final int compareTo(Trip trip) {
