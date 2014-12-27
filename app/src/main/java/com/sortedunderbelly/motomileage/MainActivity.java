@@ -151,6 +151,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
                         tripDistanceText.getWindowToken(), 0);
                 Toast.makeText(
                         getApplicationContext(), R.string.tripSavedText, Toast.LENGTH_SHORT).show();
+                clearFocus();
             } else {
                 // display message asking user to provide date, desc, and distance
                 simpleErrorDialog(R.string.missingMessage);
@@ -515,5 +516,12 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
 
     public TripStorage getStorage() {
         return storage;
+    }
+
+    private void clearFocus() {
+        View current = getCurrentFocus();
+        if (current != null) {
+            current.clearFocus();
+        }
     }
 }
