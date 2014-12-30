@@ -65,6 +65,8 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        GCMHelper helper = new GCMHelper(this, getApplicationContext());
+
         dateFormat = android.text.format.DateFormat.getDateFormat(this);
         prefStorageChoiceKey = getResources().getString(R.string.prefStorageChoiceKey);
         prefReminderChoiceKey = getResources().getString(R.string.prefReminderChoiceKey);
