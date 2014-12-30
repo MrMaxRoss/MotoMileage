@@ -1,9 +1,6 @@
-package com.sortedunderbelly.motomileage.test;
+package com.sortedunderbelly.motomileage.storage;
 
 import android.test.RenamingDelegatingContext;
-
-import com.sortedunderbelly.motomileage.SharedPreferencesTripStorage;
-import com.sortedunderbelly.motomileage.TripStorage;
 
 /**
  * Created by max.ross on 6/7/14.

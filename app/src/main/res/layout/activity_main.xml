@@ -54,6 +54,16 @@
                 android:text="@string/distanceTextView"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
+            <!-- Dummy element to prevent the next EditText from getting auto focus
+                 at app startup -->
+            <LinearLayout
+                android:id="@+id/dummyElement"
+                android:focusable="true" android:focusableInTouchMode="true"
+                android:layout_width="0px" android:layout_height="0px"
+                android:orientation="horizontal" />
+
+            <!-- :nextFocusUp and :nextFocusLeft have been set to the id of this component
+                 to prevent the dummy from receiving focus again -->
             <EditText
                 android:id="@+id/tripDistance"
                 android:layout_width="fill_parent"
@@ -61,9 +71,8 @@
                 android:layout_gravity="bottom|fill_horizontal"
                 android:hint="@string/distancePrompt"
                 android:imeOptions="actionNext"
-                android:inputType="number">
-
-                <requestFocus />
+                android:inputType="number"
+                android:nextFocusUp="@id/tripDistance" android:nextFocusLeft="@id/tripDistance">
             </EditText>
         </LinearLayout>
 

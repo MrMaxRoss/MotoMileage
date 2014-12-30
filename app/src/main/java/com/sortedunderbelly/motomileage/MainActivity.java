@@ -27,6 +27,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.sortedunderbelly.motomileage.storage.StorageSystem;
+import com.sortedunderbelly.motomileage.storage.TripStorage;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -153,6 +156,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
                         tripDistanceText.getWindowToken(), 0);
                 Toast.makeText(
                         getApplicationContext(), R.string.tripSavedText, Toast.LENGTH_SHORT).show();
+                clearFocus();
             } else {
                 // display message asking user to provide date, desc, and distance
                 simpleErrorDialog(R.string.missingMessage);
@@ -517,5 +521,12 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
 
     public TripStorage getStorage() {
         return storage;
+    }
+
+    private void clearFocus() {
+        View current = getCurrentFocus();
+        if (current != null) {
+            current.clearFocus();
+        }
     }
 }

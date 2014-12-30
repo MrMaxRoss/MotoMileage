@@ -1,7 +1,12 @@
-package com.sortedunderbelly.motomileage;
+package com.sortedunderbelly.motomileage.storage;
 
 import android.content.Intent;
 import android.view.Menu;
+
+import com.sortedunderbelly.motomileage.ReminderSchedule;
+import com.sortedunderbelly.motomileage.ReminderType;
+import com.sortedunderbelly.motomileage.Trip;
+import com.sortedunderbelly.motomileage.TripFilter;
 
 import java.util.List;
 import java.util.Set;

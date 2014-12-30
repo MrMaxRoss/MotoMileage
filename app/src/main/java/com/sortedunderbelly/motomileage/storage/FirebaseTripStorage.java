@@ -1,4 +1,4 @@
-package com.sortedunderbelly.motomileage;
+package com.sortedunderbelly.motomileage.storage;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +11,15 @@ import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
+import com.sortedunderbelly.motomileage.AuthHelper;
+import com.sortedunderbelly.motomileage.AuthStruct;
+import com.sortedunderbelly.motomileage.MainActivity;
+import com.sortedunderbelly.motomileage.R;
+import com.sortedunderbelly.motomileage.ReminderSchedule;
+import com.sortedunderbelly.motomileage.ReminderType;
+import com.sortedunderbelly.motomileage.Trip;
+import com.sortedunderbelly.motomileage.TripFilter;
+import com.sortedunderbelly.motomileage.TripImpl;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -151,10 +160,12 @@ public class FirebaseTripStorage implements TripStorage {
                     @SuppressWarnings("unchecked")
                     Map<String, Object> reminderData = (Map<String, Object>) userData.get("reminder");
                     if (reminderData != null) {
-                        try {
-                            reminderSchedule = ReminderSchedule.valueOf((String) reminderData.get("reminderSchedule"));
-                        } catch (IllegalArgumentException iae) {
-                            // that's ok
+                        if (reminderData.containsKey("reminderSchedule")) {
+                            try {
+                                reminderSchedule = ReminderSchedule.valueOf((String) reminderData.get("reminderSchedule"));
+                            } catch (IllegalArgumentException iae) {
+                                // that's ok
+                            }
                         }
 
                         @SuppressWarnings("unchecked")
@@ -314,6 +325,8 @@ public class FirebaseTripStorage implements TripStorage {
             public void onComplete(FirebaseError firebaseError, Firebase firebase) {
                 if (firebaseError == null) {
                     addReminderModification();
+                } else {
+                    Log.e(TAG, "Could not update reminder schedule: " + firebaseError.toString());
                 }
             }
         });
@@ -325,7 +338,14 @@ public class FirebaseTripStorage implements TripStorage {
         // so we write the empty string as the associated value.
         Map<String, Object> data = new HashMap<String, Object>();
         data.put(userId, "");
-        firebaseRef.child("reminderModificationQueue").updateChildren(data);
+        firebaseRef.child("reminderModificationQueue").updateChildren(data, new Firebase.CompletionListener() {
+            @Override
+            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
+                if (firebaseError != null) {
+                    Log.e(TAG, "Could not update reminder modification queue: " + firebaseError.toString());
+                }
+            }
+        });
     }
 
     @Override

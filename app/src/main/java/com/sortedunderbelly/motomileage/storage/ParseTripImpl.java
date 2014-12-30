@@ -1,6 +1,7 @@
-package com.sortedunderbelly.motomileage;
+package com.sortedunderbelly.motomileage.storage;
 
 import com.parse.ParseObject;
+import com.sortedunderbelly.motomileage.BaseTrip;
 
 import java.util.Date;
 
@@ -19,7 +20,7 @@ public class ParseTripImpl extends BaseTrip {
     }
 
     @Override
-    String getIdInternal() {
+    public String getIdInternal() {
         return obj.getObjectId();
     }
 
