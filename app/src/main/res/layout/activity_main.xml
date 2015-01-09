@@ -8,14 +8,17 @@
         android:id="@+id/gridLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:columnCount="1"
+        android:columnCount="2"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context=".MainActivity">
+        tools:context=".MainActivity"
+        android:background="@color/mileage_background">
 
-        <LinearLayout android:layout_gravity="fill_horizontal">
+        <LinearLayout android:layout_gravity="fill_horizontal"
+            android:layout_row="0"
+            android:layout_column="1">
 
             <TextView
                 android:id="@+id/dateTextView"
@@ -23,7 +26,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|fill_horizontal"
                 android:text="@string/dateTextView"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/tripDate"
@@ -44,7 +48,9 @@
 
         </LinearLayout>
 
-        <LinearLayout android:layout_gravity="fill_horizontal">
+        <LinearLayout android:layout_gravity="fill_horizontal"
+            android:layout_row="1"
+            android:layout_column="1">
 
             <TextView
                 android:id="@+id/distanceTextView"
@@ -52,7 +58,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|fill_horizontal"
                 android:text="@string/distanceTextView"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
 
             <!-- Dummy element to prevent the next EditText from getting auto focus
                  at app startup -->
@@ -76,7 +83,9 @@
             </EditText>
         </LinearLayout>
 
-        <LinearLayout android:layout_gravity="fill_horizontal">
+        <LinearLayout android:layout_gravity="fill_horizontal"
+            android:layout_row="2"
+            android:layout_column="1">
 
             <TextView
                 android:id="@+id/descTextView"
@@ -84,7 +93,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|fill_horizontal"
                 android:text="@string/descTextView"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
 
             <EditText
                 android:id="@+id/tripDesc"
@@ -96,25 +106,65 @@
                 android:inputType="text" />
         </LinearLayout>
 
-        <LinearLayout android:layout_gravity="fill_horizontal">
+        <LinearLayout android:layout_gravity="fill_horizontal"
+            android:layout_row="3"
+            android:layout_column="1"
+            android:layout_marginLeft="100dp">
 
             <Button
                 android:id="@+id/saveOrUpdateButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/saveTripButtonText" />
+                android:text="@string/saveTripButtonText"/>
 
             <Button
                 android:id="@+id/clearButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/clearButtonText" />
+                android:text="@string/clearButtonText"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="fill"
+            android:layout_row="5"
+            android:layout_column="1">
+
+            <ImageView
+                android:layout_gravity="center_horizontal"
+                android:paddingTop="10dp"
+                android:paddingBottom="5dp"
+                android:layout_height="3dp"
+                android:layout_width="fill_parent"
+                android:src="@android:drawable/divider_horizontal_bright"
+                tools:ignore="ContentDescription"
+                android:background="#ffd7d5c2" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="fill">
+            android:layout_gravity="fill"
+            android:layout_row="6"
+            android:layout_column="1">
+
+            <TextView
+                android:id="@+id/totalTextView"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:text="@string/totalTextView"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/totalTextValueView"
+                android:text="@string/initialTotalTextValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|fill_horizontal"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Spinner
                 android:id="@+id/tripDisplaySpinner"
@@ -125,21 +175,6 @@
                 android:prompt="@string/tripDisplaySpinnerPrompt"
                 android:spinnerMode="dialog" />
 
-            <TextView
-                android:id="@+id/totalTextView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|fill_horizontal"
-                android:text="@string/totalTextView"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <TextView
-                android:id="@+id/totalTextValueView"
-                android:text="@string/initialTotalTextValue"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|fill_horizontal"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
         </LinearLayout>
 
         <LinearLayout
@@ -148,19 +183,20 @@
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:background="@android:color/background_light"
             android:orientation="vertical"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin">
-
+            android:paddingLeft="@dimen/list_item_horizontal_margin"
+            android:paddingRight="@dimen/list_item_horizontal_margin"
+            android:paddingTop="@dimen/list_item_vertical_margin"
+            android:layout_row="7"
+            android:layout_column="1">
 
             <ListView
                 android:id="@android:id/list"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_gravity="fill"
-                android:layout_marginBottom="@dimen/tagged_searches_padding"
-                android:layout_marginTop="@dimen/tagged_searches_padding"
-                android:layout_weight="1" />
+                android:layout_marginBottom="@dimen/list_item_horizontal_margin"
+                android:layout_marginTop="@dimen/list_item_vertical_margin"
+                android:layout_weight="1"
+                android:background="@color/mileage_background" />
 
         </LinearLayout>
     </GridLayout>

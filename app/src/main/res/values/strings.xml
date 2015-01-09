@@ -19,10 +19,10 @@
     <string name="invalidInputMessage">Input was not in a valid format</string>
     <string name="invalidTripReference">Could not retrieve the selected Trip</string>
     <string name="datePrompt">Date</string>
-    <string name="saveTripButtonText">Save Trip</string>
-    <string name="updateTripButtonText">Update Trip</string>
+    <string name="saveTripButtonText">Save</string>
+    <string name="updateTripButtonText">Update</string>
     <string name="descPrompt">Description</string>
-    <string name="clearButtonText">Clear Trip</string>
+    <string name="clearButtonText">Clear</string>
     <string name="tripSavedText">Trip Saved</string>
     <string name="tripDeletedText">Trip Deleted</string>
     <string name="tripUpdatedText">Trip Updated</string>
@@ -38,7 +38,7 @@
     <string name="tripDisplaySpinnerPrompt">Trips to display</string>
     <string name="dateFormatSummary">Date Format</string>
     <string name="dateFormatTitle">Date Format</string>
-    <string name="totalTextView">Total:</string>
+    <string name="totalTextView">Total Miles:</string>
     <string name="totalTextValueView">Total Value</string>
     <string name="storageChoiceTitle">Storage System</string>
     <string name="storageChoiceSummary">Storage System</string>
@@ -64,5 +64,7 @@
     <!--<string name="firebase_url">https://intense-fire-8866.firebaseio.com</string>-->
     <string name="action_logout">Logout</string>
     <string name="initialTotalTextValue">0</string>
+    <!--<string name="backend_url">https://aerial-grid-725.appspot.com</string>-->
+    <string name="backend_url">http://localhost:8080</string>
 
 </resources>

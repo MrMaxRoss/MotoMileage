@@ -1,7 +1,6 @@
 package com.sortedunderbelly.motomileage;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,9 +43,11 @@ public class MyArrayAdapter extends ArrayAdapter<Trip> {
             tripDesc.setText(trip.getDesc());
         }
         if (position % 2 == 1) {
-            view.setBackgroundColor(Color.GRAY);
+            view.setBackgroundColor(getContext().getResources().getColor(R.color.mileage_list_item_background));
+//            view.setBackgroundColor(Color.argb(255, 206, 208, 143));
         } else {
-            view.setBackgroundColor(Color.LTGRAY);
+            view.setBackgroundColor(getContext().getResources().getColor(R.color.mileage_list_item_background_alt));
+//            view.setBackgroundColor(Color.argb(255, 202, 208, 87));
         }
         return view;
     }

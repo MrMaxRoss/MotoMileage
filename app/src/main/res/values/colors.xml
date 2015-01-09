@@ -1,0 +1,5 @@
+<resources>
+    <color name="mileage_background">#fffffcdb</color>
+    <color name="mileage_list_item_background">#FFE1FFF0</color>
+    <color name="mileage_list_item_background_alt">#FFCFEDDE</color>
+</resources>
