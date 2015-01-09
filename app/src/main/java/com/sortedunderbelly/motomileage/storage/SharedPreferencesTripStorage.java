@@ -152,7 +152,8 @@ public class SharedPreferencesTripStorage extends NoAuthTripStorage {
 
     @Override
     public Set<ReminderType> getReminderTypes() {
-        return null;
+        // TODO(max.ross)
+        return Collections.emptySet();
     }
 
     @Override
@@ -162,6 +163,6 @@ public class SharedPreferencesTripStorage extends NoAuthTripStorage {
 
     @Override
     public ReminderSchedule getReminderSchedule() {
-        return null;
+        return ReminderSchedule.NONE;
     }
 }
