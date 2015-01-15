@@ -9,11 +9,12 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
-
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
@@ -23,31 +24,34 @@ import java.io.IOException;
 public class GCMHelper {
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String TAG = "MainActivity";
-    private static final String REGISTRATION_ID_URL = "aerial-grid-725.appspot.com/gcmRegistration";
+
+    // Project number from the API Console.
+    private static final String SENDER_ID = "404913702000";
+    private static GCMHelper INSTANCE;
     final SharedPreferences prefs;
     OkHttpClient client = new OkHttpClient();
 
-    /**
-     * Substitute you own sender ID here. This is the project number you got
-     * from the API Console, as described in "Getting Started."
-     */
-    String SENDER_ID = "404913702000";
 
     private GoogleCloudMessaging gcm;
     private String regId;
 
-    GCMHelper(Context context, Context appContext) {
+    public static synchronized void init(MainActivity mainActivity, Context applicationContext,
+                                         String androidIdToken) {
+        if (INSTANCE == null) {
+            INSTANCE = new GCMHelper(mainActivity, applicationContext, androidIdToken);
+        }
+    }
+
+    private GCMHelper(Context context, Context appContext, String androidIdToken) {
         prefs = PreferenceManager.getDefaultSharedPreferences(context);
         gcm = GoogleCloudMessaging.getInstance(context);
         regId = getRegistrationId(appContext);
 
         if (regId.isEmpty()) {
-            registerInBackground(context);
+            registerInBackground(context, androidIdToken);
         }
     }
 
@@ -98,7 +102,7 @@ public class GCMHelper {
      * Stores the registration ID and app versionCode in the application's
      * shared preferences.
      */
-    private void registerInBackground(final Context context) {
+    private void registerInBackground(final Context context, final String androidIdToken) {
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... params) {
@@ -114,11 +118,7 @@ public class GCMHelper {
                     // so it can use GCM/HTTP or CCS to send messages to your app.
                     // The request to your server should be authenticated if your app
                     // is using accounts.
-                    sendRegistrationIdToBackend();
-
-                    // For this demo: we don't need to send it because the device
-                    // will send upstream messages to a server that echo back the
-                    // message using the 'from' address in the message.
+                    sendRegistrationIdToBackend(context, androidIdToken);
 
                     // Persist the regID - no need to register again.
                     storeRegistrationId(context, regId);
@@ -130,11 +130,6 @@ public class GCMHelper {
                 }
                 return msg;
             }
-
-            @Override
-            protected void onPostExecute(String msg) {
-//                mDisplay.append(msg + "\n");
-            }
         }.execute(null, null, null);
     }
 
@@ -142,20 +137,21 @@ public class GCMHelper {
      * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
      * or CCS to send messages to your app.
      */
-    private void sendRegistrationIdToBackend() throws IOException {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("regId", regId);
-        } catch (JSONException e) {
-            e.printStackTrace();
+    private void sendRegistrationIdToBackend(Context context, String androidIdToken) throws IOException {
+        RequestBody formBody = new FormEncodingBuilder()
+                .add("regId", regId)
+                .add("androidIdToken", androidIdToken)
+                .build();
+        Request request = new Request.Builder()
+                .url(context.getResources().getString(R.string.backend_url) + "/gcmRegistration")
+                .post(formBody)
+                .build();
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) {
+            throw new IOException(
+                    String.format("Response code %s updating server with registration id: %s",
+                            response.code(), response.body().string()));
         }
-//        RequestBody body = RequestBody.create(JSON, json);
-//        Request request = new Request.Builder()
-//                .url(REGISTRATION_ID_URL)
-//                .post(body)
-//                .build();
-//        Response response = client.newCall(request).execute();
-//        return response.body().string();
     }
 
     /**
@@ -171,6 +167,6 @@ public class GCMHelper {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
+        editor.apply();
     }
 }

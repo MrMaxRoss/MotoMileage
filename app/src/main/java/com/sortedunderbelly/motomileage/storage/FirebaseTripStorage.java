@@ -57,9 +57,9 @@ public class FirebaseTripStorage implements TripStorage {
     private Set<ReminderType> reminderTypes = new HashSet<ReminderType>();
     private ReminderSchedule reminderSchedule = ReminderSchedule.NONE;
 
-    public FirebaseTripStorage(Context context, MainActivity mainActivity) {
+    public FirebaseTripStorage(Context context, MainActivity mainActivity, AuthHelper authHelper) {
         this.activity = mainActivity;
-        authHelper = new AuthHelper(mainActivity);
+        this.authHelper = authHelper;
         Firebase.setAndroidContext(context);
         firebaseRef = new Firebase(context.getResources().getString(R.string.firebase_url));
 

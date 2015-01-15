@@ -15,13 +15,13 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 /**
  * Created by max.ross on 12/19/14.
  */
-public class GCMIntentService3 extends IntentService {
+public class GCMIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private static final String TAG = "GcmIntentService";
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
 
-    public GCMIntentService3() {
+    public GCMIntentService() {
         super("GcmIntentService");
     }
 
@@ -40,8 +40,7 @@ public class GCMIntentService3 extends IntentService {
              * any message types you're not interested in, or that you don't
              * recognize.
              */
-            if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
+            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
                 sendNotification("Send error: " + extras.toString());
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
@@ -51,7 +50,7 @@ public class GCMIntentService3 extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
                 // This loop represents the service doing some work.
-                for (int i=0; i<5; i++) {
+                for (int i = 0; i < 5; i++) {
                     Log.i(TAG, "Working... " + (i + 1)
                             + "/5 @ " + SystemClock.elapsedRealtime());
                     try {

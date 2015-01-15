@@ -58,6 +58,8 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
 
     private final View gridLayout;
 
+    private String androidIdToken;
+
     public AuthHelper(MainActivity activity) {
         this.activity = activity;
         this.gridLayout = activity.findViewById(R.id.gridLayout);
@@ -119,11 +121,14 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
 
             @Override
             protected String doInBackground(Void... params) {
-                String token = null;
+                String oauthToken = null;
 
                 try {
                     String scope = String.format("oauth2:%s", Scopes.PLUS_LOGIN);
-                    token = GoogleAuthUtil.getToken(activity, Plus.AccountApi.getAccountName(googleApiClient), scope);
+                    String accountName = Plus.AccountApi.getAccountName(googleApiClient);
+                    oauthToken = GoogleAuthUtil.getToken(activity, accountName, scope);
+                    androidIdToken = GoogleAuthUtil.getToken(activity, accountName,
+                            "audience:server:client_id:404913702000-ungmkf51e6ngqrfphd868h8brvq4ndfi.apps.googleusercontent.com");
                 } catch (IOException transientEx) {
                     /* Network or server error */
                     Log.e(TAG, "Error authenticating with Google: " + transientEx);
@@ -142,7 +147,7 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
                     Log.e(TAG, "Error authenticating with Google: " + authEx.getMessage(), authEx);
                     errorMessage = "Error authenticating with Google: " + authEx.getMessage();
                 }
-                return token;
+                return oauthToken;
             }
 
             @Override
@@ -246,5 +251,9 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
             }
             authStruct = null;
         }
+    }
+
+    public String getAndroidIdToken() {
+        return androidIdToken;
     }
 }

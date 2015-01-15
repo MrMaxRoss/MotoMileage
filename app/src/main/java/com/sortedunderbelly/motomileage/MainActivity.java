@@ -45,6 +45,7 @@ import java.util.Set;
 public class MainActivity extends ListActivity implements DatePickerDialog.OnDateSetListener,
         SharedPreferences.OnSharedPreferenceChangeListener, StorageCallbacks {
 
+    private AuthHelper authHelper;
     private EditText tripDateText;
     private EditText tripDescText;
     private EditText tripDistanceText;
@@ -67,8 +68,6 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        GCMHelper helper = new GCMHelper(this, getApplicationContext());
 
         dateFormat = android.text.format.DateFormat.getDateFormat(this);
         prefStorageChoiceKey = getResources().getString(R.string.prefStorageChoiceKey);
@@ -103,6 +102,11 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
                 showDatePickerDialog(view);
             }
         });
+
+        // need to init auth before storage and GCM
+//        authHelper = new AuthHelper(this);
+//        GCMHelper.init(this, getApplicationContext(), authHelper.getAndroidIdToken());
+
 
         SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         initStorage(defaultSharedPrefs);
@@ -402,11 +406,12 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         try {
             // Firebase is our default storage system
             storageSystem = StorageSystem.valueOf(
-                    preferences.getString(prefStorageChoiceKey, StorageSystem.FIREBASE.name()));
+                    preferences.getString(prefStorageChoiceKey, StorageSystem.LOCAL_PREFERENCES.name()));
+//                    preferences.getString(prefStorageChoiceKey, StorageSystem.FIREBASE.name()));
         } catch (IllegalArgumentException iae) {
             storageSystem = StorageSystem.FIREBASE;
         }
-        storage = storageSystem.getTripStorage(this, this);
+        storage = storageSystem.getTripStorage(this, this, authHelper);
         onFullRefresh();
     }
 
