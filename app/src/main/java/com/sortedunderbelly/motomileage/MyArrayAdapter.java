@@ -38,16 +38,14 @@ public class MyArrayAdapter extends ArrayAdapter<Trip> {
             TextView tripDistance = (TextView) view.findViewById(R.id.tripDistanceListItem);
             TextView tripDesc = (TextView) view.findViewById(R.id.tripDescListItem);
 
-            tripDate.setText(dateFormat.format(trip.getDate()) + ":");
-            tripDistance.setText(String.format("%d miles", trip.getDistance()));
+            tripDate.setText(dateFormat.format(trip.getDate()));
+            tripDistance.setText(Integer.valueOf(trip.getDistance()).toString());
             tripDesc.setText(trip.getDesc());
         }
         if (position % 2 == 1) {
             view.setBackgroundColor(getContext().getResources().getColor(R.color.mileage_list_item_background));
-//            view.setBackgroundColor(Color.argb(255, 206, 208, 143));
         } else {
             view.setBackgroundColor(getContext().getResources().getColor(R.color.mileage_list_item_background_alt));
-//            view.setBackgroundColor(Color.argb(255, 202, 208, 87));
         }
         return view;
     }

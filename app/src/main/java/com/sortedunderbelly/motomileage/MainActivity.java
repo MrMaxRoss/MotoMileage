@@ -32,6 +32,7 @@ import com.sortedunderbelly.motomileage.storage.TripStorage;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -59,6 +60,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
 
     // TODO(max.ross): DateFormat is not threadsafe. Do we need to care about that in an android app?
     private DateFormat dateFormat;
+    private DateFormat listItemDateFormat;
     private String prefStorageChoiceKey;
     private String prefReminderChoiceKey;
     private String prefReminderScheduleChoiceKey;
@@ -70,6 +72,8 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         setContentView(R.layout.activity_main);
 
         dateFormat = android.text.format.DateFormat.getDateFormat(this);
+        listItemDateFormat = new SimpleDateFormat("EEEE, LLLL d, yyyy");
+
         prefStorageChoiceKey = getResources().getString(R.string.prefStorageChoiceKey);
         prefReminderChoiceKey = getResources().getString(R.string.prefReminderChoiceKey);
         prefReminderScheduleChoiceKey = getResources().getString(R.string.prefReminderScheduleChoiceKey);
@@ -82,7 +86,8 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         tripTotalValueText = (TextView) findViewById(R.id.totalTextValueView);
         tripFilterSpinner = (Spinner) findViewById(R.id.tripDisplaySpinner);
         // create ArrayAdapter and use it to bind tags to the ListView
-        adapter = new MyArrayAdapter(getApplicationContext(), R.layout.list_item, filteredTrips, dateFormat);
+        adapter = new MyArrayAdapter(
+                getApplicationContext(), R.layout.list_item, filteredTrips, listItemDateFormat);
         setListAdapter(adapter);
 
         // register listener to save a new or edited trip
@@ -104,7 +109,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         });
 
         // need to init auth before storage and GCM
-//        authHelper = new AuthHelper(this);
+        authHelper = new AuthHelper(this);
 //        GCMHelper.init(this, getApplicationContext(), authHelper.getAndroidIdToken());
 
 
