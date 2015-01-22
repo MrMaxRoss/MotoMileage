@@ -110,8 +110,6 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
 
         // need to init auth before storage and GCM
         authHelper = new AuthHelper(this);
-//        GCMHelper.init(this, getApplicationContext(), authHelper.getAndroidIdToken());
-
 
         SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         initStorage(defaultSharedPrefs);
@@ -538,5 +536,13 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         if (current != null) {
             current.clearFocus();
         }
+    }
+
+    public void onAuthComplete(List<String> tokens) {
+        // Use the first token to log in to storage
+        getStorage().login(tokens.get(0));
+
+        // Use the second token to initialize GCM
+        GCMHelper.init(this, getApplicationContext(), tokens.get(1));
     }
 }

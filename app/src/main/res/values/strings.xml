@@ -65,6 +65,7 @@
     <string name="action_logout">Logout</string>
     <string name="initialTotalTextValue">0</string>
     <!--<string name="backend_url">https://aerial-grid-725.appspot.com</string>-->
-    <string name="backend_url">http://localhost:8080</string>
+    <string name="backend_url">http://192.168.1.106:8080</string>
+    <string name="web_app_client_id">audience:server:client_id:404913702000-ungmkf51e6ngqrfphd868h8brvq4ndfi.apps.googleusercontent.com</string>
 
 </resources>

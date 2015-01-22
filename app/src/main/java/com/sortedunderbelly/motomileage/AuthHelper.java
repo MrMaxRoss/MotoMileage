@@ -19,6 +19,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.plus.Plus;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by max.ross on 10/12/14.
@@ -116,19 +118,19 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
     private void getGoogleOAuthTokenAndLogin() {
         authProgressDialog.show();
         /* Get OAuth token in Background */
-        AsyncTask<Void, Void, String> task = new AsyncTask<Void, Void, String>() {
+        AsyncTask<Void, Void, List<String>> task = new AsyncTask<Void, Void, List<String>>() {
             String errorMessage = null;
 
             @Override
-            protected String doInBackground(Void... params) {
+            protected List<String> doInBackground(Void... params) {
                 String oauthToken = null;
 
                 try {
                     String scope = String.format("oauth2:%s", Scopes.PLUS_LOGIN);
                     String accountName = Plus.AccountApi.getAccountName(googleApiClient);
                     oauthToken = GoogleAuthUtil.getToken(activity, accountName, scope);
-                    androidIdToken = GoogleAuthUtil.getToken(activity, accountName,
-                            "audience:server:client_id:404913702000-ungmkf51e6ngqrfphd868h8brvq4ndfi.apps.googleusercontent.com");
+                    androidIdToken = GoogleAuthUtil.getToken(
+                            activity, accountName, activity.getResources().getString(R.string.web_app_client_id));
                 } catch (IOException transientEx) {
                     /* Network or server error */
                     Log.e(TAG, "Error authenticating with Google: " + transientEx);
@@ -147,14 +149,14 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
                     Log.e(TAG, "Error authenticating with Google: " + authEx.getMessage(), authEx);
                     errorMessage = "Error authenticating with Google: " + authEx.getMessage();
                 }
-                return oauthToken;
+                return Arrays.asList(oauthToken, androidIdToken);
             }
 
             @Override
-            protected void onPostExecute(String token) {
+            protected void onPostExecute(List<String> tokens) {
                 googleLoginClicked = false;
-                if (token != null) {
-                    activity.getStorage().login(token);
+                if (tokens != null) {
+                    activity.onAuthComplete(tokens);
                 } else if (errorMessage != null) {
                     authProgressDialog.hide();
                     activity.simpleErrorDialog(errorMessage);
@@ -251,9 +253,5 @@ public class AuthHelper implements GoogleApiClient.ConnectionCallbacks,
             }
             authStruct = null;
         }
-    }
-
-    public String getAndroidIdToken() {
-        return androidIdToken;
     }
 }
