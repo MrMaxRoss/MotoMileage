@@ -11,7 +11,6 @@
     <string-array name="storage_choices">
         <item>Local Preferences</item>
         <item>Local Database</item>
-        <item>Parse</item>
         <item>Firebase</item>
         <!--<item>Cloud Save V1</item>-->
         <!--<item>Cloud Save V2</item>-->
@@ -22,7 +21,6 @@
     <string-array name="storage_choice_values">
         <item>LOCAL_PREFERENCES</item>
         <item>LOCAL_DATABASE</item>
-        <item>PARSE</item>
         <item>FIREBASE</item>
         <!--<item>CLOUD_SAVE_V1</item>-->
         <!--<item>CLOUD_SAVE_V2</item>-->

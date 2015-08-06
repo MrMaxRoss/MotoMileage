@@ -46,7 +46,7 @@ import java.util.Set;
 public class MainActivity extends ListActivity implements DatePickerDialog.OnDateSetListener,
         SharedPreferences.OnSharedPreferenceChangeListener, StorageCallbacks {
 
-    private AuthHelper authHelper;
+    private AuthHelperImpl authHelper;
     private EditText tripDateText;
     private EditText tripDescText;
     private EditText tripDistanceText;
@@ -60,7 +60,6 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
 
     // TODO(max.ross): DateFormat is not threadsafe. Do we need to care about that in an android app?
     private DateFormat dateFormat;
-    private DateFormat listItemDateFormat;
     private String prefStorageChoiceKey;
     private String prefReminderChoiceKey;
     private String prefReminderScheduleChoiceKey;
@@ -72,7 +71,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         setContentView(R.layout.activity_main);
 
         dateFormat = android.text.format.DateFormat.getDateFormat(this);
-        listItemDateFormat = new SimpleDateFormat("EEEE, LLLL d, yyyy");
+        DateFormat listItemDateFormat = new SimpleDateFormat("EEEE, LLLL d, yyyy");
 
         prefStorageChoiceKey = getResources().getString(R.string.prefStorageChoiceKey);
         prefReminderChoiceKey = getResources().getString(R.string.prefReminderChoiceKey);
@@ -109,7 +108,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         });
 
         // need to init auth before storage and GCM
-        authHelper = new AuthHelper(this);
+        authHelper = new AuthHelperImpl(this);
 
         SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
         initStorage(defaultSharedPrefs);
@@ -409,8 +408,8 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         try {
             // Firebase is our default storage system
             storageSystem = StorageSystem.valueOf(
-                    preferences.getString(prefStorageChoiceKey, StorageSystem.LOCAL_PREFERENCES.name()));
-//                    preferences.getString(prefStorageChoiceKey, StorageSystem.FIREBASE.name()));
+//                    preferences.getString(prefStorageChoiceKey, StorageSystem.LOCAL_PREFERENCES.name()));
+                    preferences.getString(prefStorageChoiceKey, StorageSystem.FIREBASE.name()));
         } catch (IllegalArgumentException iae) {
             storageSystem = StorageSystem.FIREBASE;
         }

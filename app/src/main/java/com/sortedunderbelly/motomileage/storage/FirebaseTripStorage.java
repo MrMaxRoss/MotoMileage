@@ -12,6 +12,7 @@ import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.ValueEventListener;
 import com.sortedunderbelly.motomileage.AuthHelper;
+import com.sortedunderbelly.motomileage.AuthHelperImpl;
 import com.sortedunderbelly.motomileage.AuthStruct;
 import com.sortedunderbelly.motomileage.MainActivity;
 import com.sortedunderbelly.motomileage.R;
@@ -57,10 +58,12 @@ public class FirebaseTripStorage implements TripStorage {
     private Set<ReminderType> reminderTypes = new HashSet<ReminderType>();
     private ReminderSchedule reminderSchedule = ReminderSchedule.NONE;
 
-    public FirebaseTripStorage(Context context, MainActivity mainActivity, AuthHelper authHelper) {
+    public FirebaseTripStorage(Context context, MainActivity mainActivity, AuthHelperImpl authHelper) {
         this.activity = mainActivity;
         this.authHelper = authHelper;
         Firebase.setAndroidContext(context);
+        Firebase.getDefaultConfig().setPersistenceEnabled(true);
+
         firebaseRef = new Firebase(context.getResources().getString(R.string.firebase_url));
 
         /* Check if the user is authenticated with Firebase already. If this is the case we can set the authenticated
@@ -221,7 +224,7 @@ public class FirebaseTripStorage implements TripStorage {
             tripListener = new ChildEventListener() {
                 @Override
                 public void onChildAdded(DataSnapshot dataSnapshot, String previousChild) {
-                    Trip newTrip = toTrip(dataSnapshot.getName(), mapFromSnapshot(dataSnapshot));
+                    Trip newTrip = toTrip(dataSnapshot.getKey(), mapFromSnapshot(dataSnapshot));
                     // There's an initialization issue where we load all the user data up front and then
                     // add listeners on the list of trips. This lets us avoid adding the same trips
                     // multiple times.
@@ -234,7 +237,7 @@ public class FirebaseTripStorage implements TripStorage {
 
                 @Override
                 public void onChildChanged(DataSnapshot dataSnapshot, String previousChild) {
-                    Trip changedTrip = toTrip(dataSnapshot.getName(), mapFromSnapshot(dataSnapshot));
+                    Trip changedTrip = toTrip(dataSnapshot.getKey(), mapFromSnapshot(dataSnapshot));
                     int index = getTripIndex(changedTrip);
                     trips.set(index, changedTrip);
                     tripsById.put(changedTrip.getId(), changedTrip);
@@ -243,7 +246,7 @@ public class FirebaseTripStorage implements TripStorage {
 
                 @Override
                 public void onChildRemoved(DataSnapshot dataSnapshot) {
-                    Trip deletedTrip = toTrip(dataSnapshot.getName(), mapFromSnapshot(dataSnapshot));
+                    Trip deletedTrip = toTrip(dataSnapshot.getKey(), mapFromSnapshot(dataSnapshot));
                     int index = getTripIndex(deletedTrip);
                     trips.remove(index);
                     tripsById.remove(deletedTrip.getId());
@@ -291,7 +294,7 @@ public class FirebaseTripStorage implements TripStorage {
         tripData.put("desc", trip.getDesc());
         tripData.put("distance", trip.getDistance());
         tripRef.setValue(tripData);
-        return new TripImpl(tripRef.getName(), trip.getDate(), trip.getDesc(), trip.getDistance());
+        return new TripImpl(tripRef.getKey(), trip.getDate(), trip.getDesc(), trip.getDistance());
     }
 
     @Override
