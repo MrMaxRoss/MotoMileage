@@ -52,7 +52,16 @@ public class FirebaseTripStorage implements TripStorage {
 
     private ProgressDialog authProgressDialog;
 
-    FirebaseTripStorage() {
+    private static FirebaseTripStorage INSTANCE;
+
+    static FirebaseTripStorage getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new FirebaseTripStorage();
+        }
+        return INSTANCE;
+    }
+
+    private FirebaseTripStorage() {
         firebaseRef = FirebaseDatabase.getInstance();
         firebaseRef.setPersistenceEnabled(true);
     }
@@ -71,8 +80,10 @@ public class FirebaseTripStorage implements TripStorage {
             authProgressDialog.setCancelable(true);
             authProgressDialog.show();
             establishListeners();
+            Log.i(TAG, "Initialized storage");
+        } else {
+            Log.i(TAG, "UserId unchanged so not initializing.");
         }
-        Log.i(TAG, "Initialized storage");
     }
 
     @Override
@@ -82,7 +93,6 @@ public class FirebaseTripStorage implements TripStorage {
         tripsById.clear();
         userId = null;
         activity = null;
-        authProgressDialog = null;
         Log.i(TAG, "Reset storage");
     }
 
@@ -100,9 +110,13 @@ public class FirebaseTripStorage implements TripStorage {
 
     private void establishListeners() {
         DatabaseReference userRef = getUserRef();
+        Log.i(TAG, String.format("Registering listener for data under user %s", userRef.toString()));
+        final long start = System.currentTimeMillis();
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i(TAG, String.format("Received data snapshot in %d millis",
+                        System.currentTimeMillis() - start));
                 if (isInitialized) {
                     return;
                 }
@@ -151,6 +165,7 @@ public class FirebaseTripStorage implements TripStorage {
                     }
                 }
                 authProgressDialog.hide();
+                authProgressDialog = null;
                 activity.onFullRefresh();
 
                 if (writeFilter) {

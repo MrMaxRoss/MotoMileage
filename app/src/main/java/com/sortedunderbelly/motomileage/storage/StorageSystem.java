@@ -20,7 +20,7 @@ public enum StorageSystem {
     },
     FIREBASE {
         public TripStorage getTripStorage(ContextWrapper contextWrapper, MainActivity activity) {
-            return new FirebaseTripStorage();
+            return FirebaseTripStorage.getInstance();
         }
     };
 

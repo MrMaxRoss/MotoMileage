@@ -66,7 +66,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
     private TextView tripTotalValueText;
     private Spinner tripFilterSpinner;
     private Button saveOrUpdateButton;
-    private static TripStorage storage;
+    private TripStorage storage;
     private List<Trip> filteredTrips = new ArrayList<Trip>();
     private ArrayAdapter<Trip> adapter; // binds trip strings to ListView
     private Integer positionOfTripToUpdate = null;
@@ -157,9 +157,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         });
 
         SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        if (storage == null) {
-            initStorage(defaultSharedPrefs);
-        }
+        initStorage(defaultSharedPrefs);
         defaultSharedPrefs.registerOnSharedPreferenceChangeListener(this);
     }
 
