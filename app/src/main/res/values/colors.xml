@@ -2,4 +2,10 @@
     <color name="mileage_background">#fffffcdb</color>
     <color name="mileage_list_item_background">#FFE1FFF0</color>
     <color name="mileage_list_item_background_alt">#FFCFEDDE</color>
+    <color name="colorPrimary">#039BE5</color>
+    <color name="colorPrimaryDark">#0288D1</color>
+    <color name="colorAccent">#FFA000</color>
+    <color name="grey_100">#F5F5F5</color>
+    <color name="grey_300">#E0E0E0</color>
 </resources>
+

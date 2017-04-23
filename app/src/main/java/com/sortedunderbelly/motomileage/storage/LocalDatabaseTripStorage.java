@@ -2,17 +2,13 @@ package com.sortedunderbelly.motomileage.storage;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
-import android.view.Menu;
 
-import com.sortedunderbelly.motomileage.AuthHelper;
-import com.sortedunderbelly.motomileage.AuthHelperImpl;
-import com.sortedunderbelly.motomileage.AuthStruct;
+import com.sortedunderbelly.motomileage.MainActivity;
 import com.sortedunderbelly.motomileage.ReminderSchedule;
 import com.sortedunderbelly.motomileage.ReminderType;
 import com.sortedunderbelly.motomileage.StorageCallbacks;
@@ -51,15 +47,11 @@ public class LocalDatabaseTripStorage extends SQLiteOpenHelper implements TripSt
 
     private final SQLiteDatabase db;
     private final StorageCallbacks storageCallbacks;
-    private final AuthHelper authHelper;
 
-    public LocalDatabaseTripStorage(Context context, StorageCallbacks storageCallbacks,
-                                    AuthHelper authHelper) {
+    public LocalDatabaseTripStorage(Context context, StorageCallbacks storageCallbacks) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.db = getWritableDatabase();
         this.storageCallbacks = storageCallbacks;
-        this.authHelper = authHelper;
-        login("local database");
     }
 
     public void close() {
@@ -168,27 +160,6 @@ public class LocalDatabaseTripStorage extends SQLiteOpenHelper implements TripSt
     }
 
     @Override
-    public void login(String authToken) {
-        if (authToken == null) {
-            throw new NullPointerException("authToken cannot be null");
-        }
-        AuthStruct struct = new AuthStruct("local database", "local database", authToken);
-        authHelper.onAuthStateChanged(struct, null);
-    }
-
-    @Override
-    public void logout() {
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-    }
-
-    @Override
     public void saveReminderTypes(Set<ReminderType> reminderTypes) {
 
     }
@@ -207,5 +178,15 @@ public class LocalDatabaseTripStorage extends SQLiteOpenHelper implements TripSt
     @Override
     public ReminderSchedule getReminderSchedule() {
         return ReminderSchedule.NONE;
+    }
+
+    @Override
+    public void init(MainActivity activity, String userId) {
+
+    }
+
+    @Override
+    public void reset() {
+
     }
 }

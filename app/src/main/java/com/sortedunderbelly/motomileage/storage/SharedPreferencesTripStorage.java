@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.SharedPreferences;
 
+import com.sortedunderbelly.motomileage.MainActivity;
 import com.sortedunderbelly.motomileage.ReminderSchedule;
 import com.sortedunderbelly.motomileage.ReminderType;
 import com.sortedunderbelly.motomileage.StorageCallbacks;
@@ -21,7 +22,7 @@ import java.util.Set;
 /**
  * Created by max.ross on 5/10/14.
  */
-public class SharedPreferencesTripStorage extends NoAuthTripStorage {
+public class SharedPreferencesTripStorage implements TripStorage {
     // name of SharedPreferences XML file that stores the saved tripStorage
     private static final String TRIP_IDS = "trip_ids";
     private static final String APP_DATA = "app_data";
@@ -164,5 +165,15 @@ public class SharedPreferencesTripStorage extends NoAuthTripStorage {
     @Override
     public ReminderSchedule getReminderSchedule() {
         return ReminderSchedule.NONE;
+    }
+
+    @Override
+    public void init(MainActivity activity, String userId) {
+
+    }
+
+    @Override
+    public void reset() {
+
     }
 }

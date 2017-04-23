@@ -1,21 +1,15 @@
 package com.sortedunderbelly.motomileage.storage;
 
-import android.content.Context;
-import android.content.Intent;
+import android.app.ProgressDialog;
 import android.util.Log;
-import android.view.Menu;
 
-import com.firebase.client.AuthData;
-import com.firebase.client.ChildEventListener;
-import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
-import com.firebase.client.FirebaseError;
-import com.firebase.client.ValueEventListener;
-import com.sortedunderbelly.motomileage.AuthHelper;
-import com.sortedunderbelly.motomileage.AuthHelperImpl;
-import com.sortedunderbelly.motomileage.AuthStruct;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sortedunderbelly.motomileage.MainActivity;
-import com.sortedunderbelly.motomileage.R;
 import com.sortedunderbelly.motomileage.ReminderSchedule;
 import com.sortedunderbelly.motomileage.ReminderType;
 import com.sortedunderbelly.motomileage.Trip;
@@ -41,10 +35,9 @@ public class FirebaseTripStorage implements TripStorage {
 
     private static final String USER_DATA_PATH = "users";
 
-    private final MainActivity activity;
-    private final AuthHelper authHelper;
+    private MainActivity activity;
     private String userId;
-    private final Firebase firebaseRef;
+    private final FirebaseDatabase firebaseRef;
 
     // All trips for the user, unfiltered.
     // TODO(max.ross): Implement serverside filtering
@@ -52,97 +45,61 @@ public class FirebaseTripStorage implements TripStorage {
     private final Map<String, Trip> tripsById = new HashMap<String, Trip>();
     private TripFilter tripFilter = TripFilter.MONTH_THUS_FAR;
 
-    private final AuthResultHandler authResultHandler = new AuthResultHandler();
     private ChildEventListener tripListener;
-    boolean isInitialized = false; // true after we've received our callback with all the user data
+    private boolean isInitialized = false; // true after we've received our callback with all the user data
     private Set<ReminderType> reminderTypes = new HashSet<ReminderType>();
     private ReminderSchedule reminderSchedule = ReminderSchedule.NONE;
 
-    public FirebaseTripStorage(Context context, MainActivity mainActivity, AuthHelperImpl authHelper) {
-        this.activity = mainActivity;
-        this.authHelper = authHelper;
-        Firebase.setAndroidContext(context);
-        Firebase.getDefaultConfig().setPersistenceEnabled(true);
+    private ProgressDialog authProgressDialog;
 
-        firebaseRef = new Firebase(context.getResources().getString(R.string.firebase_url));
-
-        /* Check if the user is authenticated with Firebase already. If this is the case we can set the authenticated
-         * user and hide any login buttons */
-        firebaseRef.addAuthStateListener(new Firebase.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(AuthData authData) {
-                FirebaseTripStorage.this.onAuthStateChanged(authData);
-            }
-        });
+    FirebaseTripStorage() {
+        firebaseRef = FirebaseDatabase.getInstance();
+        firebaseRef.setPersistenceEnabled(true);
     }
 
     @Override
-    public void login(String authToken) {
-        if (authToken == null) {
-            throw new NullPointerException("authToken cannot be null");
+    public void init(MainActivity activity, String userId) {
+        this.activity = activity;
+        if (userId == null) {
+            throw new IllegalArgumentException("Cannot init with null userId");
         }
-        /* Successfully got OAuth token, now login with Google */
-        firebaseRef.authWithOAuthToken("google", authToken, authResultHandler);
-    }
-
-    /**
-     * Utility class for authentication results
-     */
-    private class AuthResultHandler implements Firebase.AuthResultHandler {
-
-        @Override
-        public void onAuthenticated(AuthData authData) {
-            FirebaseTripStorage.this.onAuthStateChanged(authData);
-        }
-
-        @Override
-        public void onAuthenticationError(FirebaseError firebaseError) {
-            authHelper.onAuthStateChanged(null, firebaseError.toString());
-        }
-    }
-
-    /**
-     * Deauthenticate from Firebase.
-     */
-    @Override
-    public void logout() {
-        if (firebaseRef.getAuth() != null) {
-            /* logout of Firebase */
-            firebaseRef.unauth();
-        }
-        userId = null;
-        isInitialized = false;
-        clearData();
-        authHelper.logout();
-    }
-
-    private void onAuthStateChanged(AuthData authData) {
-        if (authData != null) {
-            userId = authData.getUid();
+        if (!userId.equals(this.userId)) {
+            this.userId = userId;
+            authProgressDialog = new ProgressDialog(activity);
+            authProgressDialog.setTitle("Loading");
+            authProgressDialog.setMessage("Loading data...");
+            authProgressDialog.setCancelable(true);
+            authProgressDialog.show();
             establishListeners();
         }
-        authHelper.onAuthStateChanged(authDataToAuthStruct(authData), null);
+        Log.i(TAG, "Initialized storage");
     }
 
-    private Firebase getTripsRef() {
+    @Override
+    public void reset() {
+        isInitialized = false;
+        trips.clear();
+        tripsById.clear();
+        userId = null;
+        activity = null;
+        authProgressDialog = null;
+        Log.i(TAG, "Reset storage");
+    }
+
+    private DatabaseReference getTripsRef() {
         return getUserRef().child("trips");
     }
 
-    private Firebase getReminderRef() {
+    private DatabaseReference getReminderRef() {
         return getUserRef().child("reminder");
     }
 
-    private Firebase getUserRef() {
-        return firebaseRef.child(String.format("%s/%s", USER_DATA_PATH, userId));
-    }
-
-    private void clearData() {
-        trips.clear();
-        tripsById.clear();
+    private DatabaseReference getUserRef() {
+        return firebaseRef.getReference(String.format("%s/%s", USER_DATA_PATH, userId));
     }
 
     private void establishListeners() {
-        Firebase userRef = getUserRef();
+        DatabaseReference userRef = getUserRef();
         userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -150,7 +107,6 @@ public class FirebaseTripStorage implements TripStorage {
                     return;
                 }
                 isInitialized = true;
-                clearData();
                 boolean writeFilter = true;
                 Map<String, Object> userData = mapFromSnapshot(dataSnapshot);
                 if (userData != null) {
@@ -194,6 +150,7 @@ public class FirebaseTripStorage implements TripStorage {
                         }
                     }
                 }
+                authProgressDialog.hide();
                 activity.onFullRefresh();
 
                 if (writeFilter) {
@@ -204,7 +161,7 @@ public class FirebaseTripStorage implements TripStorage {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) {
+            public void onCancelled(DatabaseError firebaseError) {
                 Log.e(TAG, "onCancelled: " + firebaseError.toString());
             }
         });
@@ -219,7 +176,7 @@ public class FirebaseTripStorage implements TripStorage {
     }
 
     private void attachTripListeners() {
-        Firebase tripsRef = getTripsRef();
+        DatabaseReference tripsRef = getTripsRef();
         if (tripListener == null) {
             tripListener = new ChildEventListener() {
                 @Override
@@ -259,7 +216,7 @@ public class FirebaseTripStorage implements TripStorage {
                 }
 
                 @Override
-                public void onCancelled(FirebaseError firebaseError) {
+                public void onCancelled(DatabaseError firebaseError) {
                     Log.e(TAG, "onCancelled: " + firebaseError.toString());
                 }
             };
@@ -270,20 +227,10 @@ public class FirebaseTripStorage implements TripStorage {
             tripsRef.addChildEventListener(tripListener);
         }
     }
-    private static AuthStruct authDataToAuthStruct(AuthData authData) {
-        if (authData == null) {
-            return null;
-        }
-        return new AuthStruct(
-                authData.getProvider(),
-                (String) authData.getProviderData().get("displayName"),
-                authData.getToken());
-    }
-
     @Override
     public Trip save(Trip trip) {
-        Firebase tripsRef = getTripsRef();
-        Firebase tripRef;
+        DatabaseReference tripsRef = getTripsRef();
+        DatabaseReference tripRef;
         if (trip.hasId()) {
             tripRef = tripsRef.child(trip.getId());
         } else {
@@ -299,7 +246,7 @@ public class FirebaseTripStorage implements TripStorage {
 
     @Override
     public boolean delete(String tripId) {
-        Firebase child = getTripsRef().child(tripId);
+        DatabaseReference child = getTripsRef().child(tripId);
         child.removeValue();
         return true;
     }
@@ -308,7 +255,7 @@ public class FirebaseTripStorage implements TripStorage {
     public void saveReminderTypes(Set<ReminderType> reminderTypes) {
         this.reminderTypes.clear();
         this.reminderTypes.addAll(reminderTypes);
-        Firebase remindersRef = getReminderRef().child("reminderTypes");
+        DatabaseReference remindersRef = getReminderRef().child("reminderTypes");
         remindersRef.setValue(new ArrayList<ReminderType>(reminderTypes));
     }
 
@@ -320,16 +267,16 @@ public class FirebaseTripStorage implements TripStorage {
     @Override
     public void saveReminderSchedule(final ReminderSchedule schedule) {
         this.reminderSchedule = schedule;
-        Firebase reminderRef = getReminderRef();
+        DatabaseReference reminderRef = getReminderRef();
         Map<String, Object> userData = new HashMap<String, Object>();
         userData.put("reminderSchedule", schedule.name());
-        reminderRef.updateChildren(userData, new Firebase.CompletionListener() {
+        reminderRef.updateChildren(userData, new DatabaseReference.CompletionListener() {
             @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError == null) {
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError == null) {
                     addReminderModification();
                 } else {
-                    Log.e(TAG, "Could not update reminder schedule: " + firebaseError.toString());
+                    Log.e(TAG, "Could not update reminder schedule: " + databaseError.toString());
                 }
             }
         });
@@ -341,11 +288,11 @@ public class FirebaseTripStorage implements TripStorage {
         // so we write the empty string as the associated value.
         Map<String, Object> data = new HashMap<String, Object>();
         data.put(userId, "");
-        firebaseRef.child("reminderModificationQueue").updateChildren(data, new Firebase.CompletionListener() {
+        firebaseRef.getReference("reminderModificationQueue").updateChildren(data, new DatabaseReference.CompletionListener() {
             @Override
-            public void onComplete(FirebaseError firebaseError, Firebase firebase) {
-                if (firebaseError != null) {
-                    Log.e(TAG, "Could not update reminder modification queue: " + firebaseError.toString());
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    Log.e(TAG, "Could not update reminder modification queue: " + databaseError.toString());
                 }
             }
         });
@@ -371,7 +318,7 @@ public class FirebaseTripStorage implements TripStorage {
         this.tripFilter = tripFilter;
         // Updating the database is best effort. If it fails, that's fine, it just means we may
         // lose the current filter the next time we run the app.
-        Firebase userRef = getUserRef();
+        DatabaseReference userRef = getUserRef();
         Map<String, Object> userData = new HashMap<String, Object>();
         userData.put("tripFilter", tripFilter.name());
         userRef.updateChildren(userData);
@@ -395,15 +342,5 @@ public class FirebaseTripStorage implements TripStorage {
     @SuppressWarnings("unchecked")
     private static Map<String, Object> mapFromSnapshot(DataSnapshot snapshot) {
         return (Map<String, Object>) snapshot.getValue();
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        authHelper.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        menu.findItem(R.id.action_logout).setVisible(true);
     }
 }

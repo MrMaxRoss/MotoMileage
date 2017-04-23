@@ -1,8 +1,6 @@
 package com.sortedunderbelly.motomileage.storage;
 
-import android.content.Intent;
-import android.view.Menu;
-
+import com.sortedunderbelly.motomileage.MainActivity;
 import com.sortedunderbelly.motomileage.ReminderSchedule;
 import com.sortedunderbelly.motomileage.ReminderType;
 import com.sortedunderbelly.motomileage.Trip;
@@ -21,12 +19,11 @@ public interface TripStorage {
     List<Trip> allTrips();
     void saveTripFilter(TripFilter tripFilter);
     TripFilter getLastTripFilter();
-    void login(String authToken);
-    void logout();
-    void onActivityResult(int requestCode, int resultCode, Intent data);
-    void onPrepareOptionsMenu(Menu menu);
     void saveReminderTypes(Set<ReminderType> reminderTypes);
     Set<ReminderType> getReminderTypes();
     void saveReminderSchedule(ReminderSchedule schedule);
     ReminderSchedule getReminderSchedule();
+
+    void init(MainActivity activity, String userId);
+    void reset();
 }

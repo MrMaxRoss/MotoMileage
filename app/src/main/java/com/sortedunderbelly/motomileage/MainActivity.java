@@ -12,6 +12,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +29,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.sortedunderbelly.motomileage.storage.StorageSystem;
 import com.sortedunderbelly.motomileage.storage.TripStorage;
 
@@ -46,14 +53,20 @@ import java.util.Set;
 public class MainActivity extends ListActivity implements DatePickerDialog.OnDateSetListener,
         SharedPreferences.OnSharedPreferenceChangeListener, StorageCallbacks {
 
-    private AuthHelperImpl authHelper;
+    private static final String TAG = "MainActivity";
+    private static final int RC_SIGN_IN = 9001;
+
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser mUser;
+
     private EditText tripDateText;
     private EditText tripDescText;
     private EditText tripDistanceText;
     private TextView tripTotalValueText;
     private Spinner tripFilterSpinner;
     private Button saveOrUpdateButton;
-    private TripStorage storage;
+    private static TripStorage storage;
     private List<Trip> filteredTrips = new ArrayList<Trip>();
     private ArrayAdapter<Trip> adapter; // binds trip strings to ListView
     private Integer positionOfTripToUpdate = null;
@@ -68,6 +81,42 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // need to init auth before storage and GCM
+        FirebaseAuth.AuthStateListener listener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                if (firebaseAuth.getCurrentUser() == null) {
+                    // User is signed out
+                    Log.d(TAG, "onAuthStateChanged:signed_out");
+                    return;
+                }
+                if (!firebaseAuth.getCurrentUser().equals(mUser)) {
+                    mUser = firebaseAuth.getCurrentUser();
+                    // User is signed in
+                    Log.d(TAG, "onAuthStateChanged:signed_in:" + mUser.getUid());
+                    storage.reset();
+                    storage.init(MainActivity.this, mUser.getUid());
+
+                    // GCMHelper.init(this, getApplicationContext(), tokens.get(1));
+
+                    onFullRefresh();
+                }
+            }
+        };
+
+        this.mAuth = FirebaseAuth.getInstance();
+        this.mAuthListener = listener;
+        if (mAuth.getCurrentUser() == null) {
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setIsSmartLockEnabled(!BuildConfig.DEBUG)
+                            .setProviders(Collections.singletonList(
+                                    new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build()))
+                            .build(), RC_SIGN_IN);
+        }
+
         setContentView(R.layout.activity_main);
 
         dateFormat = android.text.format.DateFormat.getDateFormat(this);
@@ -107,12 +156,27 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
             }
         });
 
-        // need to init auth before storage and GCM
-        authHelper = new AuthHelperImpl(this);
-
         SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
-        initStorage(defaultSharedPrefs);
+        if (storage == null) {
+            initStorage(defaultSharedPrefs);
+        }
         defaultSharedPrefs.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mAuth.addAuthStateListener(mAuthListener);
+        Log.i(TAG, "registered auth state listener");
+    }
+
+    @Override
+    public void onStop() {
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+            Log.i(TAG, "deregistered auth state listener");
+        }
+        super.onStop();
     }
 
     private void filterAllTrips(TripFilter filter) {
@@ -354,9 +418,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         // Only show the menu items if we're on the main screen
         if (findViewById(R.id.gridLayout).getVisibility() == View.VISIBLE) {
             menu.setGroupVisible(0, true);
-            // logout menu is not visible by default. Storage impl can change that if it wants.
-            menu.findItem(R.id.action_logout).setVisible(false);
-            storage.onPrepareOptionsMenu(menu);
+            menu.findItem(R.id.action_logout).setVisible(true);
         } else {
             // main screen is not visible so disable all menu items
             menu.setGroupVisible(0, false);
@@ -368,7 +430,16 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_logout) {
-            storage.logout();
+            AuthUI.getInstance()
+                    .signOut(this)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        public void onComplete(@NonNull Task<Void> task) {
+                            // user is now signed out
+                            storage.reset();
+                            startActivity(new Intent(MainActivity.this, MainActivity.class));
+                            finish();
+                        }
+                    });
             onFullRefresh();
             return true;
         } else if (id == R.id.action_settings) {
@@ -413,7 +484,7 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         } catch (IllegalArgumentException iae) {
             storageSystem = StorageSystem.FIREBASE;
         }
-        storage = storageSystem.getTripStorage(this, this, authHelper);
+        storage = storageSystem.getTripStorage(this, this);
         onFullRefresh();
     }
 
@@ -516,16 +587,6 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         notifyDataSetChanged(currentTotalDistance - deletedTrip.getDistance());
     }
 
-    /**
-     * This method fires when any startActivityForResult finishes. The requestCode maps to
-     * the value passed into startActivityForResult.
-     */
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        storage.onActivityResult(requestCode, resultCode, data);
-    }
-
     public TripStorage getStorage() {
         return storage;
     }
@@ -535,13 +596,5 @@ public class MainActivity extends ListActivity implements DatePickerDialog.OnDat
         if (current != null) {
             current.clearFocus();
         }
-    }
-
-    public void onAuthComplete(List<String> tokens) {
-        // Use the first token to log in to storage
-        getStorage().login(tokens.get(0));
-
-        // Use the second token to initialize GCM
-        GCMHelper.init(this, getApplicationContext(), tokens.get(1));
     }
 }
