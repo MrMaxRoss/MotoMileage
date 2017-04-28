@@ -32,15 +32,18 @@ public class TripFilterTest {
     public void testLastFullMonth() {
         for (int dayOfMonth = 1; dayOfMonth < 28; dayOfMonth++) {
             lastFullMonth(
-                    new GregorianCalendar(2015, Calendar.JANUARY, dayOfMonth),
-                    new GregorianCalendar(2015, Calendar.FEBRUARY, dayOfMonth));
+                    new GregorianCalendar(2015, Calendar.JANUARY, dayOfMonth, 13, 22, 11),
+                    new GregorianCalendar(2015, Calendar.FEBRUARY, dayOfMonth, 13, 22, 11));
+            lastFullMonth(
+                    new GregorianCalendar(2015, Calendar.JANUARY, dayOfMonth, 2, 22, 11),
+                    new GregorianCalendar(2015, Calendar.FEBRUARY, dayOfMonth, 2, 22, 11));
         }
     }
 
     @Test
     public void testMonthThusFar() {
         for (int dayOfMonth = 1; dayOfMonth < 28; dayOfMonth++) {
-            TripFilter.setNow(new GregorianCalendar(2015, Calendar.JANUARY, dayOfMonth));
+            TripFilter.setNow(new GregorianCalendar(2015, Calendar.JANUARY, dayOfMonth, 13, 22, 11));
             assertEquals(new GregorianCalendar(2015, Calendar.JANUARY, 1).getTime(), TripFilter.MONTH_THUS_FAR.getEarliest());
             assertEquals(null, TripFilter.MONTH_THUS_FAR.getLatest());
         }
@@ -49,7 +52,7 @@ public class TripFilterTest {
     @Test
     public void testLastFullYear() {
         for (int dayOfMonth = 1; dayOfMonth < 28; dayOfMonth++) {
-            TripFilter.setNow(new GregorianCalendar(2015, Calendar.JANUARY, dayOfMonth));
+            TripFilter.setNow(new GregorianCalendar(2015, Calendar.JANUARY, dayOfMonth, 13, 22, 11));
             assertEquals(new GregorianCalendar(2014, Calendar.JANUARY, 1).getTime(), TripFilter.LAST_FULL_YEAR.getEarliest());
             assertEquals(new GregorianCalendar(2015, Calendar.JANUARY, 1).getTime(), TripFilter.LAST_FULL_YEAR.getLatest());
         }
@@ -58,7 +61,7 @@ public class TripFilterTest {
     @Test
     public void testYearThusFar() {
         for (int dayOfMonth = 1; dayOfMonth < 28; dayOfMonth++) {
-            TripFilter.setNow(new GregorianCalendar(2015, Calendar.OCTOBER, dayOfMonth));
+            TripFilter.setNow(new GregorianCalendar(2015, Calendar.OCTOBER, dayOfMonth, 13, 22, 11));
             assertEquals(new GregorianCalendar(2015, Calendar.JANUARY, 1).getTime(), TripFilter.YEAR_THUS_FAR.getEarliest());
             assertEquals(null, TripFilter.YEAR_THUS_FAR.getLatest());
         }
